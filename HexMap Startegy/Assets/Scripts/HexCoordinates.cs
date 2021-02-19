@@ -16,10 +16,13 @@ public struct HexCoordinates
 		Z = z;
 	}
 
-	public static HexCoordinates FromOffsetCoordinates(int x, int z)
+//da posiszione da coordinate non allineate
+	public static HexCoordinates FromOffsetCoordinates(int x, int z) 
 	{
 		return new HexCoordinates(x - z / 2, z);
 	}
+	
+	//da le coordinate in base alla posizione nello spazio
 	public static HexCoordinates FromPosition(Vector3 position)
 	{
 		float x = position.x / (HexMetrics.innerRadius * 2f);
@@ -49,15 +52,18 @@ public struct HexCoordinates
 
 
 
+
+
+
 	public override string ToString()
 	{
 		return "(" +X.ToString() + ", " + Y.ToString() + ", " + Z.ToString() + ")";
 	}
-
 	public string ToStringOnSeparateLines()
 	{
 		return X.ToString() + "\n" + Y.ToString() + "\n" + Z.ToString();
 	}
+
 
 
 }

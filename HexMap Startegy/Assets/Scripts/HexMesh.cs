@@ -5,11 +5,14 @@ using System.Collections.Generic;
 public class HexMesh : MonoBehaviour
 {
 	Mesh hexMesh;
+	MeshCollider meshCollider;
+	
 	List<Vector3> vertices;
 	List<int> triangles;
-	MeshCollider meshCollider;
-
 	List<Color> colors;
+	
+
+	
 
 
 	void Awake()
@@ -23,6 +26,7 @@ public class HexMesh : MonoBehaviour
 		colors = new List<Color>();
 	}
 
+//cancella la mappa e ne fa una nuova
 	public void Triangulate(HexCell[] cells)
 	{
 		hexMesh.Clear();
@@ -41,6 +45,7 @@ public class HexMesh : MonoBehaviour
 		meshCollider.sharedMesh = hexMesh;
 	}
 
+//aggiunge una cella
 	void Triangulate(HexCell cell)
 	{
 		Vector3 center = cell.transform.localPosition;

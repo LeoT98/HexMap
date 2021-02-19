@@ -33,6 +33,7 @@ public class HexGrid : MonoBehaviour
 		}
 	}
 
+//fatto dopo awake
 	void Start()
 	{
 		hexMesh.Triangulate(cells);
