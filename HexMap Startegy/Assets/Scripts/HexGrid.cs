@@ -9,7 +9,7 @@ public class HexGrid : MonoBehaviour
 
 	public HexCell cellPrefab;
 	HexCell[] cells;
-
+	     
 	public Text cellLabelPrefab;
 	HexMesh hexMesh;
 	Canvas gridCanvas;
@@ -63,6 +63,24 @@ public class HexGrid : MonoBehaviour
 		cell.transform.localPosition = position;
 		cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
 		cell.color = defaultColor;
+
+		//imposta i vicini
+		if (x > 0) {
+			cell.SetNeighbor(HexDirection.W, cells[i - 1]);
+		}
+		if (z > 0) { 
+			if ((z & 1) == 0) {//modo figo per prendere i numeri dispari
+				cell.SetNeighbor(HexDirection.SE, cells[i - width]);
+				if (x > 0) {
+					cell.SetNeighbor(HexDirection.SW, cells[i - width - 1]);
+				}
+			} else {
+				cell.SetNeighbor(HexDirection.SW, cells[i - width]);
+				if (x < width - 1) {
+					cell.SetNeighbor(HexDirection.SE, cells[i - width + 1]);
+				}
+			}
+		}
 
 		//aggiunge testo
 		Text label = Instantiate<Text>(cellLabelPrefab);
