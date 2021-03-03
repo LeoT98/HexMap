@@ -14,8 +14,15 @@ public static class HexMetrics
 	public const float verticalTerraceStepSize = 1f / (terracesPerSlope + 1);
 
 	//servono per il blending dei colori
-	public const float solidFactor = 0.75f;
+	public const float solidFactor = 0.8f;  // 1= no bordo
 	public const float blendFactor = 1f - solidFactor;
+
+	// roba del rumore
+	public static Texture2D noiseSource; //serve per rumore sui vertici
+	public const float cellPerturbStrength = 3f; // rumore orizzontale, 0 per non fare rumore (moltiplica il rumore)
+	public const float noiseScale = 0.003f; //numero piccolo da meno variazioni sulla distanza (iniziale  0.003)
+	public const float elevationPerturbStrength = 0f; //rumore sull'altezza della cella (0 non fa niente)
+
 
 	//posizione dei vertici in relazione al centro
 	static Vector3[] corners = {
@@ -28,6 +35,9 @@ public static class HexMetrics
 		new Vector3(0f, 0f, outerRadius) //serve per non uscire dal vettore se faccio for, guale al primo
 	};
 
+	
+
+
 	public static Vector3 GetFirstCorner(HexDirection direction)
 	{
 		return corners[(int)direction];
@@ -37,7 +47,6 @@ public static class HexMetrics
 	{
 		return corners[(int)direction + 1];
 	}
-
 
 
 	public static Vector3 GetFirstSolidCorner(HexDirection direction)
@@ -71,6 +80,7 @@ public static class HexMetrics
 		return Color.Lerp(a, b, h);
 	}
 
+	//da il tipo di connessione per fare la mesh
 	public static HexEdgeType GetEdgeType(int elevation1, int elevation2)
 	{
 		if (elevation1 == elevation2) {
@@ -84,6 +94,10 @@ public static class HexMetrics
 	}
 
 
+	public static Vector4 SampleNoise(Vector3 position)
+	{
+		return noiseSource.GetPixelBilinear(position.x * noiseScale,position.z * noiseScale);
+	}
 
 
 }

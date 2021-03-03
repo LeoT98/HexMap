@@ -9,14 +9,16 @@ public class HexCell : MonoBehaviour
             return elevation;
         }
         set {
-            elevation = value;
-            Vector3 position = transform.localPosition;
-            position.y = value * HexMetrics.elevationStep;
-            transform.localPosition = position;
+			elevation = value;
+			Vector3 position = transform.localPosition;
+			position.y = value * HexMetrics.elevationStep;
+			position.y += // causa rumore sull'altezza
+				(HexMetrics.SampleNoise(position).y * 2f - 1f)  * HexMetrics.elevationPerturbStrength;
+			transform.localPosition = position;
 
-            Vector3 uiPosition = uiRect.localPosition;
-            uiPosition.z = elevation * -HexMetrics.elevationStep;
-            uiRect.localPosition = uiPosition;
+			Vector3 uiPosition = uiRect.localPosition;
+			uiPosition.z = -position.y;
+			uiRect.localPosition = uiPosition;
         }
     }
     int elevation;
@@ -26,6 +28,11 @@ public class HexCell : MonoBehaviour
     [SerializeField]
     HexCell[] neighbors;
 
+    public Vector3 Position {
+        get {
+            return transform.localPosition;
+        }
+    }
 
 
     public HexCell GetNeighbor(HexDirection direction)
@@ -41,9 +48,7 @@ public class HexCell : MonoBehaviour
 
     public HexEdgeType GetEdgeType(HexDirection direction)
     {
-        return HexMetrics.GetEdgeType(
-            elevation, neighbors[(int)direction].elevation
-        );
+        return HexMetrics.GetEdgeType(elevation, neighbors[(int)direction].elevation);
     }
 
     public HexEdgeType GetEdgeType(HexCell otherCell)
