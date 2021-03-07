@@ -13,6 +13,9 @@ public static class HexMetrics
 	public const float horizontalTerraceStepSize = 1f / terraceSteps;
 	public const float verticalTerraceStepSize = 1f / (terracesPerSlope + 1);
 
+	//divido la mappa in chunks per farla più grande
+	public const int chunkSizeX = 5, chunkSizeZ = 5; //dimensione di un chunks
+
 	//servono per il blending dei colori
 	public const float solidFactor = 0.8f;  // 1= no bordo
 	public const float blendFactor = 1f - solidFactor;
