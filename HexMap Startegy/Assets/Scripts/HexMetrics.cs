@@ -4,8 +4,10 @@
 public static class HexMetrics
 {
 	//dimensioni esagoni
+	public const float outerToInner = 0.866025404f; //serve per conversione
+	public const float innerToOuter = 1f / outerToInner; //serve per conversione
 	public const float outerRadius = 10f;
-	public const float innerRadius = outerRadius * 0.866025404f;
+	public const float innerRadius = outerRadius * outerToInner;
 	public const float elevationStep = 5f;
 	//per il terrazzamento
 	public const int terracesPerSlope = 2;
@@ -26,6 +28,11 @@ public static class HexMetrics
 	public const float noiseScale = 0.003f; //numero piccolo da meno variazioni sulla distanza (iniziale  0.003)
 	public const float elevationPerturbStrength = 0f; //rumore sull'altezza della cella (0 non fa niente)
 
+	//Acqua
+	//lo scorrere del fiume è fatto nello shader River.
+	//per il colore devo guardare RiverShaderMaterial
+	public const float streamBedElevationOffset = -1.5f; //profondità fiume
+	public const float riverSurfaceElevationOffset = -0.5f; //profondita fiumi
 
 	//posizione dei vertici in relazione al centro
 	static Vector3[] corners = {
@@ -96,11 +103,26 @@ public static class HexMetrics
 		return HexEdgeType.Cliff;
 	}
 
+	public static Vector3 GetSolidEdgeMiddle(HexDirection direction)
+	{
+		return
+			(corners[(int)direction] + corners[(int)direction + 1]) *
+			(0.5f * solidFactor);
+	}
 
 	public static Vector4 SampleNoise(Vector3 position)
 	{
 		return noiseSource.GetPixelBilinear(position.x * noiseScale,position.z * noiseScale);
 	}
 
+	//serve a applicare rumore
+	public static Vector3 Perturb(Vector3 position)
+	{
+		Vector4 sample = SampleNoise(position);
+		position.x += (sample.x * 2f - 1f) * cellPerturbStrength;
+		//		position.y += (sample.y * 2f - 1f) * HexMetrics.cellPerturbStrength; commento per mantenere le cose piatte
+		position.z += (sample.z * 2f - 1f) * cellPerturbStrength;
+		return position;
+	}
 
 }

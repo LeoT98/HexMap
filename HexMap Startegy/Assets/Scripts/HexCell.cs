@@ -6,6 +6,9 @@ public class HexCell : MonoBehaviour
     public HexGridChunk chunk; //chunk in cui è contenuta
     public RectTransform uiRect; //riferimento alla posizione dell'etichetta
 
+    [SerializeField]
+    HexCell[] neighbors;
+
     public int Elevation {
         get {
             return elevation;
@@ -23,6 +26,14 @@ public class HexCell : MonoBehaviour
 			Vector3 uiPosition = uiRect.localPosition;
 			uiPosition.z = -position.y;
 			uiRect.localPosition = uiPosition;
+
+            //previene fiumi che vanno in salita
+            if( hasOutgoingRiver && elevation < GetNeighbor(outgoingRiver).elevation) {
+                RemoveOutgoingRiver();
+            }
+            if( hasIncomingRiver && elevation > GetNeighbor(incomingRiver).elevation) {
+                RemoveIncomingRiver();
+            }
 
             Refresh();
         }
@@ -43,14 +54,62 @@ public class HexCell : MonoBehaviour
     }
     Color color;
 
-    [SerializeField]
-    HexCell[] neighbors;
-
     public Vector3 Position {
         get {
             return transform.localPosition;
         }
     }
+
+    public bool HasIncomingRiver {
+        get {
+            return hasIncomingRiver;
+        }
+    }
+
+    public bool HasOutgoingRiver {
+        get {
+            return hasOutgoingRiver;
+        }
+    }
+    bool hasIncomingRiver, hasOutgoingRiver;
+
+    public HexDirection IncomingRiver {
+        get {
+            return incomingRiver;
+        }
+    }
+
+    public HexDirection OutgoingRiver {
+        get {
+            return outgoingRiver;
+        }
+    }
+    HexDirection incomingRiver, outgoingRiver;
+
+    public bool HasRiver {
+        get {
+            return hasIncomingRiver || hasOutgoingRiver;
+        }
+    }
+
+    public bool HasRiverBeginOrEnd {
+        get {
+            return hasIncomingRiver != hasOutgoingRiver;
+        }
+    }
+
+    public float StreamBedY { //altezza del fondo del fiume
+        get {
+            return   (elevation + HexMetrics.streamBedElevationOffset) * HexMetrics.elevationStep;
+        }
+    }
+
+    public float RiverSurfaceY {
+        get {
+            return  (elevation + HexMetrics.riverSurfaceElevationOffset)  * HexMetrics.elevationStep;
+        }
+    }
+    /////////////////////////////////////////////////////////////
 
 
     public HexCell GetNeighbor(HexDirection direction)
@@ -86,6 +145,76 @@ public class HexCell : MonoBehaviour
                 }
             }
         }
+    }
+
+    void RefreshSelfOnly()
+    {
+        chunk.Refresh();
+    }
+
+    public bool HasRiverThroughEdge(HexDirection direction)
+    {
+        return
+           ( hasIncomingRiver && incomingRiver == direction ) || ( hasOutgoingRiver && outgoingRiver == direction );
+    }
+
+    public void RemoveRiver()
+    {
+        RemoveOutgoingRiver();
+        RemoveIncomingRiver();
+    }
+
+    public void RemoveOutgoingRiver()
+    {
+        if (!hasOutgoingRiver) {
+            return;
+        }
+        hasOutgoingRiver = false;
+        RefreshSelfOnly();
+
+        HexCell neighbor = GetNeighbor(outgoingRiver);
+        neighbor.hasIncomingRiver = false;
+        neighbor.RefreshSelfOnly();
+    }
+
+    public void RemoveIncomingRiver()
+    {
+        if (!hasIncomingRiver) {
+            return;
+        }
+        hasIncomingRiver = false;
+        RefreshSelfOnly();
+
+        HexCell neighbor = GetNeighbor(incomingRiver);
+        neighbor.hasOutgoingRiver = false;
+        neighbor.RefreshSelfOnly();
+    }
+
+    public void SetOutgoingRiver(HexDirection direction)
+    {
+        //prima controlla seposso aggiungere il fiume in questa direzione
+        if (hasOutgoingRiver && outgoingRiver == direction) {
+            return;
+        }
+        HexCell neighbor = GetNeighbor(direction);
+        if (!neighbor || elevation < neighbor.elevation) {
+            return;
+        }
+
+        // rimuove il vecchio fiume
+        RemoveOutgoingRiver();
+        if (hasIncomingRiver && incomingRiver == direction) {
+            RemoveIncomingRiver();
+        }
+
+        //aggiunge nuovo fiume
+        hasOutgoingRiver = true;
+        outgoingRiver = direction;
+        RefreshSelfOnly();
+        neighbor.RemoveIncomingRiver();
+        neighbor.hasIncomingRiver = true;
+        neighbor.incomingRiver = direction.Opposite();
+        neighbor.RefreshSelfOnly();
     }
 
 
