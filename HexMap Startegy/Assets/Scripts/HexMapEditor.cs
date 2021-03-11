@@ -15,8 +15,8 @@ public class HexMapEditor : MonoBehaviour
 	int brushSize;
 
 
-	enum OptionalToggle   { Ignore, Yes, No }
-	OptionalToggle riverMode;
+	enum OptionalToggle   { Ignore, Yes, No } // yes aggiunge, no rimuove
+	OptionalToggle riverMode, roadMode;
 
 	//servono se devo trascinare da una cella ad un altra (tipo coi fiumi)
 	bool isDrag;
@@ -81,8 +81,20 @@ public class HexMapEditor : MonoBehaviour
 
 			if (riverMode == OptionalToggle.No) {
 				cell.RemoveRiver();
-			} else if (isDrag && riverMode == OptionalToggle.Yes) {
-				previousCell.SetOutgoingRiver(dragDirection);
+			}
+			if (roadMode == OptionalToggle.No) {
+				cell.RemoveRoads();
+			}
+			if (isDrag) {
+				HexCell otherCell = cell.GetNeighbor(dragDirection.Opposite());
+				if (otherCell) {
+					if (riverMode == OptionalToggle.Yes) {
+						otherCell.SetOutgoingRiver(dragDirection);
+					}
+					if (roadMode == OptionalToggle.Yes) {
+						otherCell.AddRoad(dragDirection);
+					}
+				}
 			}
 		}
 	}
@@ -138,7 +150,10 @@ public class HexMapEditor : MonoBehaviour
 		riverMode = (OptionalToggle)mode;
 	}
 
-
+	public void SetRoadMode(int mode)
+	{
+		roadMode = (OptionalToggle)mode;
+	}
 
 }
 

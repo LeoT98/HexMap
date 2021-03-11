@@ -35,6 +35,13 @@ public class HexCell : MonoBehaviour
                 RemoveIncomingRiver();
             }
 
+            //rimuove strade se c'è troppa diffrenza d'altezza
+            for (int i = 0; i < roads.Length; i++) {
+                if (roads[i] && GetElevationDifference((HexDirection)i) > roadMaxDeltaElevation) {
+                    SetRoad(i, false);
+                }
+            }
+
             Refresh();
         }
     }
@@ -60,6 +67,7 @@ public class HexCell : MonoBehaviour
         }
     }
 
+    #region FIUMI
     public bool HasIncomingRiver {
         get {
             return hasIncomingRiver;
@@ -109,6 +117,32 @@ public class HexCell : MonoBehaviour
             return  (elevation + HexMetrics.riverSurfaceElevationOffset)  * HexMetrics.elevationStep;
         }
     }
+
+    public HexDirection RiverBeginOrEndDirection {
+        get {
+            return hasIncomingRiver ? incomingRiver : outgoingRiver;
+        }
+    }
+
+    #endregion
+
+    //Strade
+    [SerializeField]
+    bool[] roads;  //nell inspector metterlo con size=6
+    [SerializeField]
+    int roadMaxDeltaElevation = 1; //max differenza di altezza per cui posso mettere una strada
+
+    public bool HasRoads {
+        get {
+            for (int i = 0; i < roads.Length; i++) {
+                if (roads[i]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
     /////////////////////////////////////////////////////////////
 
 
@@ -210,12 +244,52 @@ public class HexCell : MonoBehaviour
         //aggiunge nuovo fiume
         hasOutgoingRiver = true;
         outgoingRiver = direction;
-        RefreshSelfOnly();
+ //    RefreshSelfOnly();  ci pensa la strada a refreshare
         neighbor.RemoveIncomingRiver();
         neighbor.hasIncomingRiver = true;
         neighbor.incomingRiver = direction.Opposite();
-        neighbor.RefreshSelfOnly();
+        //  neighbor.RefreshSelfOnly();  ci pensa la strada a refreshare
+
+        SetRoad((int)direction, false);  //si occupa anche dei refresh;
     }
+
+    public int GetElevationDifference(HexDirection direction)
+    {
+        int difference = elevation - GetNeighbor(direction).elevation;
+        return difference >= 0 ? difference : -difference;
+    }
+
+    public bool HasRoadThroughEdge(HexDirection direction)
+    {
+        return roads[(int)direction];
+    }
+
+    public void AddRoad(HexDirection direction)
+    {
+        if (!roads[(int)direction] && !HasRiverThroughEdge(direction) && GetElevationDifference(direction) <= roadMaxDeltaElevation) {
+            SetRoad((int)direction, true);
+        }
+    }
+
+    public void RemoveRoads()
+    {
+        for (int i = 0; i < neighbors.Length; i++) {
+            if (roads[i]) {
+                SetRoad(i, false);
+            }
+        }
+    }
+
+    void SetRoad(int index, bool state)
+    {
+        roads[index] = state;
+        neighbors[index].roads[(int)((HexDirection)index).Opposite()] = state;
+        neighbors[index].RefreshSelfOnly();
+        RefreshSelfOnly();
+    }
+
+
+
 
 
 }

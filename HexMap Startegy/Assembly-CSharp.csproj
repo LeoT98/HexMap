@@ -55,6 +55,7 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\ListPool.cs" />
     <Compile Include="Assets\Scripts\HexGrid.cs" />
     <Compile Include="Assets\Scripts\HexMetrics.cs" />
     <Compile Include="Assets\Scripts\EdgeVertices.cs" />
@@ -66,11 +67,11 @@
     <Compile Include="Assets\Scripts\HexEdgeType.cs" />
     <Compile Include="Assets\Scripts\HexGridChunk.cs" />
     <Compile Include="Assets\Scripts\HexCell.cs" />
-    <Compile Include="Assets\Scripts\ListPool.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Scripts\VertexColors.shader" />
      <None Include="Assets\Scripts\River.shader" />
+     <None Include="Assets\Scripts\Road.shader" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\2020.1.9f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>

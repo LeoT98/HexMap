@@ -9,6 +9,7 @@ public static class HexMetrics
 	public const float outerRadius = 10f;
 	public const float innerRadius = outerRadius * outerToInner;
 	public const float elevationStep = 5f;
+
 	//per il terrazzamento
 	public const int terracesPerSlope = 2;
 	public const int terraceSteps = terracesPerSlope * 2 + 1;
@@ -16,7 +17,7 @@ public static class HexMetrics
 	public const float verticalTerraceStepSize = 1f / (terracesPerSlope + 1);
 
 	//divido la mappa in chunks per farla più grande
-	public const int chunkSizeX = 5, chunkSizeZ = 5; //dimensione di un chunks
+	public const int chunkSizeX = 6, chunkSizeZ = 6; //dimensione di un chunks
 
 	//servono per il blending dei colori
 	public const float solidFactor = 0.8f;  // 1= no bordo
