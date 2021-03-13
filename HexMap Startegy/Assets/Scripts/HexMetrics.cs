@@ -32,8 +32,10 @@ public static class HexMetrics
 	//Acqua
 	//lo scorrere del fiume è fatto nello shader River.
 	//per il colore devo guardare RiverShaderMaterial
-	public const float streamBedElevationOffset = -1.5f; //profondità fiume
-	public const float riverSurfaceElevationOffset = -0.5f; //profondita fiumi
+	public const float streamBedElevationOffset = -1.5f; //profondità letto del fiume
+	public const float waterElevationOffset = -0.5f; //livello dell'acqua
+	public const float waterFactor = 0.6f; //come il solid factor ma per il bordo con le ondine dell'acqua, minore del solid factor
+	public const float waterBlendFactor = 1f - waterFactor;
 
 	//posizione dei vertici in relazione al centro
 	static Vector3[] corners = {
@@ -70,9 +72,25 @@ public static class HexMetrics
 		return corners[(int)direction + 1] * solidFactor;
 	}
 
+	public static Vector3 GetFirstWaterCorner(HexDirection direction)
+	{
+		return corners[(int)direction] * waterFactor;
+	}
+
+	public static Vector3 GetSecondWaterCorner(HexDirection direction)
+	{
+		return corners[(int)direction + 1] * waterFactor;
+	}
+
 	public static Vector3 GetBridge(HexDirection direction)
 	{
 		return (corners[(int)direction] + corners[(int)direction + 1]) * blendFactor;
+	}
+
+	public static Vector3 GetWaterBridge(HexDirection direction)
+	{
+		return (corners[(int)direction] + corners[(int)direction + 1]) *
+			waterBlendFactor;
 	}
 
 	public static Vector3 TerraceLerp(Vector3 a, Vector3 b, int step)

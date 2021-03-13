@@ -28,12 +28,7 @@ public class HexCell : MonoBehaviour
 			uiRect.localPosition = uiPosition;
 
             //previene fiumi che vanno in salita
-            if( hasOutgoingRiver && elevation < GetNeighbor(outgoingRiver).elevation) {
-                RemoveOutgoingRiver();
-            }
-            if( hasIncomingRiver && elevation > GetNeighbor(incomingRiver).elevation) {
-                RemoveIncomingRiver();
-            }
+            ValidateRivers();
 
             //rimuove strade se c'è troppa diffrenza d'altezza
             for (int i = 0; i < roads.Length; i++) {
@@ -67,7 +62,7 @@ public class HexCell : MonoBehaviour
         }
     }
 
-    #region FIUMI
+    #region FIUMI & ACQUA
     public bool HasIncomingRiver {
         get {
             return hasIncomingRiver;
@@ -114,7 +109,7 @@ public class HexCell : MonoBehaviour
 
     public float RiverSurfaceY {
         get {
-            return  (elevation + HexMetrics.riverSurfaceElevationOffset)  * HexMetrics.elevationStep;
+            return  (elevation + HexMetrics.waterElevationOffset)  * HexMetrics.elevationStep;
         }
     }
 
@@ -124,7 +119,38 @@ public class HexCell : MonoBehaviour
         }
     }
 
+
+    //Mare e acqua 
+    public int WaterLevel {
+        get {
+            return waterLevel;
+        }
+        set {
+            if (waterLevel == value) {
+                return;
+            }
+            waterLevel = value;
+            ValidateRivers();
+            Refresh();
+        }
+    }
+    int waterLevel;
+
+    public bool IsUnderwater {
+        get {
+            return waterLevel > elevation;
+        }
+    }
+
+    public float WaterSurfaceY {
+        get {
+            return
+                (waterLevel + HexMetrics.waterElevationOffset) * HexMetrics.elevationStep;
+        }
+    }
+
     #endregion
+
 
     //Strade
     [SerializeField]
@@ -231,7 +257,7 @@ public class HexCell : MonoBehaviour
             return;
         }
         HexCell neighbor = GetNeighbor(direction);
-        if (!neighbor || elevation < neighbor.elevation) {
+        if (!IsValidRiverDestination(neighbor)) {
             return;
         }
 
@@ -251,6 +277,23 @@ public class HexCell : MonoBehaviour
         //  neighbor.RefreshSelfOnly();  ci pensa la strada a refreshare
 
         SetRoad((int)direction, false);  //si occupa anche dei refresh;
+    }
+
+    bool IsValidRiverDestination(HexCell neighbor)
+    {
+        return neighbor && ( elevation >= neighbor.elevation || waterLevel == neighbor.elevation );
+    }
+
+    //rimuove fiumi nn validi
+    void ValidateRivers()
+    {
+        if (hasOutgoingRiver &&  !IsValidRiverDestination(GetNeighbor(outgoingRiver)) ) {
+            RemoveOutgoingRiver();
+        }
+        if (  hasIncomingRiver &&  !GetNeighbor(incomingRiver).IsValidRiverDestination(this)
+        ) {
+            RemoveIncomingRiver();
+        }
     }
 
     public int GetElevationDifference(HexDirection direction)

@@ -69,9 +69,13 @@
     <Compile Include="Assets\Scripts\HexCell.cs" />
   </ItemGroup>
   <ItemGroup>
-     <None Include="Assets\Scripts\VertexColors.shader" />
-     <None Include="Assets\Scripts\River.shader" />
-     <None Include="Assets\Scripts\Road.shader" />
+     <None Include="Assets\Scripts\Shaders\Water.shader" />
+     <None Include="Assets\Scripts\Shaders\VertexColors.shader" />
+     <None Include="Assets\Scripts\Shaders\Estuary.shader" />
+     <None Include="Assets\Scripts\Shaders\WaterShore.shader" />
+     <None Include="Assets\Scripts\Shaders\Water.cginc" />
+     <None Include="Assets\Scripts\Shaders\River.shader" />
+     <None Include="Assets\Scripts\Shaders\Road.shader" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\2020.1.9f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>

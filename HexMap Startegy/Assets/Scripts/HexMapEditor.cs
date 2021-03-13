@@ -9,8 +9,8 @@ public class HexMapEditor : MonoBehaviour
 	private Color activeColor;
 	bool applyColor;
 
-	int activeElevation;
-	bool applyElevation = true;
+	int activeElevation, activeWaterLevel;
+	bool applyElevation = true, applyWaterLevel = true;
 
 	int brushSize;
 
@@ -78,6 +78,9 @@ public class HexMapEditor : MonoBehaviour
 			if (applyElevation) {
 				cell.Elevation = activeElevation;
 			}
+			if (applyWaterLevel) {
+				cell.WaterLevel = activeWaterLevel;
+			}
 
 			if (riverMode == OptionalToggle.No) {
 				cell.RemoveRiver();
@@ -117,7 +120,11 @@ public class HexMapEditor : MonoBehaviour
 	}
 
 
-	public void SelectColor(int index)
+	////////////////////////////////////////////
+    #region metodi UI
+
+
+    public void SelectColor(int index)
 	{
 		applyColor = index >= 0;
 		if (applyColor) {
@@ -155,5 +162,16 @@ public class HexMapEditor : MonoBehaviour
 		roadMode = (OptionalToggle)mode;
 	}
 
+	public void SetApplyWaterLevel(bool toggle)
+	{
+		applyWaterLevel = toggle;
+	}
+
+	public void SetWaterLevel(float level)
+	{
+		activeWaterLevel = (int)level;
+	}
+
+#endregion
 }
 
