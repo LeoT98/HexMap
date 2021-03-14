@@ -67,6 +67,9 @@
     <Compile Include="Assets\Scripts\HexEdgeType.cs" />
     <Compile Include="Assets\Scripts\HexGridChunk.cs" />
     <Compile Include="Assets\Scripts\HexCell.cs" />
+    <Compile Include="Assets\Scripts\HexFeatureManager.cs" />
+    <Compile Include="Assets\Scripts\HexHash.cs" />
+    <Compile Include="Assets\Scripts\HexFeatureCollection.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Scripts\Shaders\Water.shader" />

@@ -197,9 +197,7 @@ public class HexMesh : MonoBehaviour
 		uv2s.Add(new Vector2(uMax, vMax));
 	}
 
-	public void AddQuadUnperturbed(
-		Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4
-	)
+	public void AddQuadUnperturbed(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4)
 	{
 		int vertexIndex = vertices.Count;
 		vertices.Add(v1);

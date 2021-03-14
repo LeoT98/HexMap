@@ -17,17 +17,24 @@ public class HexGrid : MonoBehaviour
 	public Color touchedColor = Color.magenta;
 
 	public Texture2D noiseSource;
+
+	public int seed;
+
 	/// //////////////////////////////////////////////////////////////
 
 	void OnEnable()
 	{
-		HexMetrics.noiseSource = noiseSource;
+		if (!HexMetrics.noiseSource) {
+			HexMetrics.noiseSource = noiseSource;
+			HexMetrics.InitializeHashGrid(seed);
+		}
 	}
 
 	void Awake()
 	{
 		HexMetrics.noiseSource = noiseSource;
-	
+		HexMetrics.InitializeHashGrid(seed);
+
 		cellCountX = chunkCountX * HexMetrics.chunkSizeX;
 		cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
 

@@ -8,7 +8,7 @@ public static class HexMetrics
 	public const float innerToOuter = 1f / outerToInner; //serve per conversione
 	public const float outerRadius = 10f;
 	public const float innerRadius = outerRadius * outerToInner;
-	public const float elevationStep = 5f;
+	public const float elevationStep = 4f;
 
 	//per il terrazzamento
 	public const int terracesPerSlope = 2;
@@ -26,14 +26,14 @@ public static class HexMetrics
 	// roba del rumore
 	public static Texture2D noiseSource; //serve per rumore sui vertici
 	public const float cellPerturbStrength = 3f; // rumore orizzontale, 0 per non fare rumore (moltiplica il rumore)
-	public const float noiseScale = 0.003f; //numero piccolo da meno variazioni sulla distanza (iniziale  0.003)
+	public const float noiseScale = 0.004f; //numero piccolo da meno variazioni sulla distanza (iniziale  0.003)
 	public const float elevationPerturbStrength = 0f; //rumore sull'altezza della cella (0 non fa niente)
 
 	//Acqua
 	//lo scorrere del fiume è fatto nello shader River.
 	//per il colore devo guardare RiverShaderMaterial
-	public const float streamBedElevationOffset = -1.5f; //profondità letto del fiume
-	public const float waterElevationOffset = -0.5f; //livello dell'acqua
+	public const float streamBedElevationOffset = -1.2f; //profondità letto del fiume, 0 non c'è
+	public const float waterElevationOffset = -0.3f; //livello dell'acqua, 0 è la superficie
 	public const float waterFactor = 0.6f; //come il solid factor ma per il bordo con le ondine dell'acqua, minore del solid factor
 	public const float waterBlendFactor = 1f - waterFactor;
 
@@ -48,7 +48,30 @@ public static class HexMetrics
 		new Vector3(0f, 0f, outerRadius) //serve per non uscire dal vettore se faccio for, guale al primo
 	};
 
-	
+
+	// cose casuali prefatte, quindi costanti
+	public const int hashGridSize = 256;
+	static HexHash[] hashGrid;
+	public const float hashGridScale = 0.25f; //un valore piccolo mi fa muovere piano nella griglia
+	public static void InitializeHashGrid(int seed)
+	{
+		hashGrid = new HexHash[hashGridSize * hashGridSize];
+		Random.State currentState = Random.state; //cosi il resto non segue questo seed
+		Random.InitState(seed);
+		for (int i = 0; i < hashGrid.Length; i++) {
+			hashGrid[i] = HexHash.Create();
+		}
+		Random.state = currentState;//cosi il resto non segue questo seed
+	}
+
+	static float[][] featureThresholds = { //dale probabilita di scelta delle features
+		new float[] {0.0f, 0.0f, 0.5f},
+		new float[] {0.0f, 0.4f, 0.6f},
+		new float[] {0.4f, 0.6f, 0.9f}
+	};
+
+
+	/// ////////////////////////////////////////////////////////
 
 
 	public static Vector3 GetFirstCorner(HexDirection direction)
@@ -143,5 +166,26 @@ public static class HexMetrics
 		position.z += (sample.z * 2f - 1f) * cellPerturbStrength;
 		return position;
 	}
+
+	//da valore casuale (fisso e genrato all'inizio) tra 0 e 1 in base alle componenti x,z
+	public static HexHash SampleHashGrid(Vector3 position)
+	{
+		int x = (int)(position.x * hashGridScale) % hashGridSize;
+		if (x < 0) {
+			x += hashGridSize;
+		}
+		int z = (int)(position.z * hashGridScale) % hashGridSize;
+		if (z < 0) {
+			z += hashGridSize;
+		}
+		return hashGrid[x + z * hashGridSize];
+	}
+
+	public static float[] GetFeatureThresholds(int level)
+	{
+		return featureThresholds[level];
+	}
+
+
 
 }
