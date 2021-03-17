@@ -4,9 +4,10 @@ public class HexFeatureManager : MonoBehaviour
 {
 	public HexFeatureCollection[]   //contengono i prefabs delle varie features
 			urbanCollections, farmCollections, plantCollections; 
-	Transform container; 
 
+	Transform container; //ci butto le feature create per cancellarle più veloce
 
+	public HexMesh walls;
 
 	public void Clear() {
 		if (container) {
@@ -14,10 +15,12 @@ public class HexFeatureManager : MonoBehaviour
 		}
 		container = new GameObject("Features Container").transform;
 		container.SetParent(transform, false);
+
+		walls.Clear();
 	}
 
 	public void Apply() {
-	
+		walls.Apply();
 	}
 
 	public void AddFeature(HexCell cell, Vector3 position) {
@@ -72,5 +75,167 @@ public class HexFeatureManager : MonoBehaviour
 		return null;
 	}
 
+	//mette il muro sui lati tra 2 celle
+	public void AddWall(EdgeVertices near, HexCell nearCell, EdgeVertices far, HexCell farCell, bool hasRiver, bool hasRoad)
+	{
+		//il primo if decide su che lati mettere i muri
+		if (nearCell.Walled != farCell.Walled && //controlla se i confinanti sono murati
+			!nearCell.IsUnderwater && !farCell.IsUnderwater &&
+			nearCell.GetEdgeType(farCell) != HexEdgeType.Cliff) 
+			{
+			AddWallSegment(near.v1, far.v1, near.v2, far.v2);
+			if (hasRiver || hasRoad) {
+				AddWallCap(near.v2, far.v2);
+				AddWallCap(far.v4, near.v4);
+			}
+			else {
+				AddWallSegment(near.v2, far.v2, near.v3, far.v3);
+				AddWallSegment(near.v3, far.v3, near.v4, far.v4);
+			}
+			AddWallSegment(near.v4, far.v4, near.v5, far.v5);
+		}
+	}
 
+	//mette il muro sul lato tra 2 celle
+	void AddWallSegment(Vector3 nearLeft, Vector3 farLeft, Vector3 nearRight, Vector3 farRight)
+	{
+		nearLeft = HexMetrics.Perturb(nearLeft);
+		farLeft = HexMetrics.Perturb(farLeft);
+		nearRight = HexMetrics.Perturb(nearRight);
+		farRight = HexMetrics.Perturb(farRight);
+
+		Vector3 left = HexMetrics.WallLerp(nearLeft, farLeft);
+		Vector3 right = HexMetrics.WallLerp(nearRight, farRight);
+
+		Vector3 leftThicknessOffset =HexMetrics.WallThicknessOffset(nearLeft, farLeft);
+		Vector3 rightThicknessOffset =HexMetrics.WallThicknessOffset(nearRight, farRight);
+
+		float leftTop = left.y + HexMetrics.wallHeight;
+		float rightTop = right.y + HexMetrics.wallHeight;
+
+		Vector3 v1, v2, v3, v4;
+		v1 = v3 = left - leftThicknessOffset;
+		v2 = v4 = right - rightThicknessOffset;
+		v3.y = leftTop;
+		v4.y = rightTop;
+		walls.AddQuadUnperturbed(v1, v2, v3, v4);
+
+		Vector3 t1 = v3, t2 = v4;
+
+		v1 = v3 = left + leftThicknessOffset;
+		v2 = v4 = right + rightThicknessOffset;
+		v3.y = leftTop;
+		v4.y = rightTop;
+		walls.AddQuadUnperturbed(v2, v1, v4, v3);
+
+		walls.AddQuadUnperturbed(t1, t2, v3, v4); //sopra del muro
+	}
+
+	//questo riempie sulle intersezioni tra 3 celle
+	public void AddWall(
+		Vector3 c1, HexCell cell1,
+		Vector3 c2, HexCell cell2,
+		Vector3 c3, HexCell cell3
+	)
+	{
+		if (cell1.Walled) {
+			if (cell2.Walled) {
+				if (!cell3.Walled) {
+					AddWallSegment(c3, cell3, c1, cell1, c2, cell2);
+				}
+			}
+			else if (cell3.Walled) {
+				AddWallSegment(c2, cell2, c3, cell3, c1, cell1);
+			}
+			else {
+				AddWallSegment(c1, cell1, c2, cell2, c3, cell3);
+			}
+		}
+		else if (cell2.Walled) {
+			if (cell3.Walled) {
+				AddWallSegment(c1, cell1, c2, cell2, c3, cell3);
+			}
+			else {
+				AddWallSegment(c2, cell2, c3, cell3, c1, cell1);
+			}
+		}
+		else if (cell3.Walled) {
+			AddWallSegment(c3, cell3, c1, cell1, c2, cell2);
+		}
+	}
+
+	//riempie un'intersezione tra 3 celle
+	void AddWallSegment(
+		Vector3 pivot, HexCell pivotCell,
+		Vector3 left, HexCell leftCell,
+		Vector3 right, HexCell rightCell
+	)
+	{
+		if (pivotCell.IsUnderwater) {
+			return;
+		}
+		bool hasLeftWall = !leftCell.IsUnderwater && pivotCell.GetEdgeType(leftCell) != HexEdgeType.Cliff;
+		bool hasRighWall = !rightCell.IsUnderwater && pivotCell.GetEdgeType(rightCell) != HexEdgeType.Cliff;
+
+		if (hasLeftWall) {
+			if (hasRighWall) {
+				AddWallSegment(pivot, left, pivot, right);
+			}
+			else if (leftCell.Elevation < rightCell.Elevation) {
+				AddWallWedge(pivot, left, right);
+			}
+			else {
+				AddWallCap(pivot, left);
+			}
+		}
+		else if (hasRighWall) {
+			if (rightCell.Elevation < leftCell.Elevation) {
+				AddWallWedge(right, pivot, left);
+			}
+			else {
+				AddWallCap(right, pivot);
+			}
+		}
+
+	}
+
+	//chiude i buchi quando c'è un fume o una strada
+	void AddWallCap(Vector3 near, Vector3 far)
+	{
+		near = HexMetrics.Perturb(near);
+		far = HexMetrics.Perturb(far);
+
+		Vector3 center = HexMetrics.WallLerp(near, far);
+		Vector3 thickness = HexMetrics.WallThicknessOffset(near, far);
+
+		Vector3 v1, v2, v3, v4;
+
+		v1 = v3 = center - thickness;
+		v2 = v4 = center + thickness;
+		v3.y = v4.y = center.y + HexMetrics.wallHeight;
+		walls.AddQuadUnperturbed(v1, v2, v3, v4);
+	}
+
+	//mette un cuneo, tipo per riempire i buchi con le Cliff
+	void AddWallWedge(Vector3 near, Vector3 far, Vector3 point)
+	{
+		near = HexMetrics.Perturb(near);
+		far = HexMetrics.Perturb(far);
+		point = HexMetrics.Perturb(point);
+
+		Vector3 center = HexMetrics.WallLerp(near, far);
+		Vector3 thickness = HexMetrics.WallThicknessOffset(near, far);
+
+		Vector3 v1, v2, v3, v4;
+		Vector3 pointTop = point;
+		point.y = center.y;
+
+		v1 = v3 = center - thickness;
+		v2 = v4 = center + thickness;
+		v3.y = v4.y = pointTop.y = center.y + HexMetrics.wallHeight;
+
+		walls.AddQuadUnperturbed(v1, point, v3, pointTop);
+		walls.AddQuadUnperturbed(point, v2, pointTop, v4);
+		walls.AddTriangleUnperturbed(pointTop, v3, v4);
+	}
 }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-// valori numerici sulle dimensioni dell'esagono
+// valori numerici sulle dimensioni dell'esagono e altre robe
 public static class HexMetrics
 {
 	//dimensioni esagoni
@@ -48,7 +48,7 @@ public static class HexMetrics
 		new Vector3(0f, 0f, outerRadius) //serve per non uscire dal vettore se faccio for, guale al primo
 	};
 
-
+	//Feature e Muri
 	// cose casuali prefatte, quindi costanti
 	public const int hashGridSize = 256;
 	static HexHash[] hashGrid;
@@ -64,12 +64,15 @@ public static class HexMetrics
 		Random.state = currentState;//cosi il resto non segue questo seed
 	}
 
-	static float[][] featureThresholds = { //dale probabilita di scelta delle features
+	static float[][] featureThresholds = { //da le probabilita di scelta delle features
 		new float[] {0.0f, 0.0f, 0.5f},
 		new float[] {0.0f, 0.4f, 0.6f},
 		new float[] {0.4f, 0.6f, 0.9f}
 	};
 
+	public const float wallHeight = 3f; //altezza muri
+	public const float wallThickness = 0.75f; //spessore
+	public const float wallElevationOffset = verticalTerraceStepSize;
 
 	/// ////////////////////////////////////////////////////////
 
@@ -185,6 +188,26 @@ public static class HexMetrics
 	{
 		return featureThresholds[level];
 	}
+
+	public static Vector3 WallThicknessOffset(Vector3 near, Vector3 far)
+	{
+		Vector3 offset;
+		offset.x = far.x - near.x;
+		offset.y = 0f;
+		offset.z = far.z - near.z;
+		return offset.normalized * (wallThickness * 0.5f);
+	}
+
+	public static Vector3 WallLerp(Vector3 near, Vector3 far)
+	{
+		near.x += (far.x - near.x) * 0.5f;
+		near.z += (far.z - near.z) * 0.5f;
+		float v =
+			near.y < far.y ? wallElevationOffset : (1f - wallElevationOffset);
+		near.y += (far.y - near.y) * v;
+		return near;
+	}
+
 
 
 

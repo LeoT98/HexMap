@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
+
+//seve per usare i vettori nell'inspector
 public struct HexFeatureCollection
 {
 
