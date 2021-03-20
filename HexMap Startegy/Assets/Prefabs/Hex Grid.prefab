@@ -48,6 +48,12 @@ MonoBehaviour:
   chunkPrefab: {fileID: 0}
   cellPrefab: {fileID: 7058479050626653984, guid: 4f31f3510844091429e2ba24d25ab55a, type: 3}
   cellLabelPrefab: {fileID: 7452378139513781427, guid: 304bcaf9fb4aff748852ba843b3560fc, type: 3}
-  defaultColor: {r: 1, g: 1, b: 1, a: 1}
   touchedColor: {r: 1, g: 0, b: 1, a: 1}
   noiseSource: {fileID: 2800000, guid: 07db2c4966d481f4eaf66274dc0d4829, type: 3}
+  seed: 0
+  colors:
+  - {r: 1, g: 0.87076926, b: 0, a: 1}
+  - {r: 0, g: 1, b: 0, a: 1}
+  - {r: 0, g: 0, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 0.5647059, g: 0.30980393, b: 0, a: 1}

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
 
 public class HexCell : MonoBehaviour
 {
@@ -17,18 +18,8 @@ public class HexCell : MonoBehaviour
             if (elevation == value)    return;
 
             elevation = value;
-			Vector3 position = transform.localPosition;
-			position.y = value * HexMetrics.elevationStep;
-			position.y += // causa rumore sull'altezza
-				(HexMetrics.SampleNoise(position).y * 2f - 1f)  * HexMetrics.elevationPerturbStrength;
-			transform.localPosition = position;
-
-			Vector3 uiPosition = uiRect.localPosition;
-			uiPosition.z = -position.y;
-			uiRect.localPosition = uiPosition;
-
-            //previene fiumi che vanno in salita
-            ValidateRivers();
+            RefreshPosition();
+            ValidateRivers();  //previene fiumi che vanno in salita
 
             //rimuove strade se c'è troppa diffrenza d'altezza
             for (int i = 0; i < roads.Length; i++) {
@@ -44,17 +35,22 @@ public class HexCell : MonoBehaviour
 
     public Color Color {
         get {
-            return color;
-        }
-        set {
-            if (color == value) {
-                return;
-            }
-            color = value;
-            Refresh();
+            return HexMetrics.colors[terrainTypeIndex];
         }
     }
-    Color color;
+
+    public int TerrainTypeIndex {
+        get {
+            return terrainTypeIndex;
+        }
+        set {
+            if (terrainTypeIndex != value) {
+                terrainTypeIndex = value;
+                Refresh();
+            }
+        }
+    }
+    int terrainTypeIndex;
 
     public Vector3 Position {
         get {
@@ -154,7 +150,7 @@ public class HexCell : MonoBehaviour
     [SerializeField]
     bool[] roads;  //nell inspector metterlo con size=6
     [SerializeField]
-    int roadMaxDeltaElevation = 1; //max differenza di altezza per cui posso mettere una strada
+    int roadMaxDeltaElevation = 2; //max differenza di altezza per cui posso mettere una strada
 
     public bool HasRoads {
         get {
@@ -243,6 +239,18 @@ public class HexCell : MonoBehaviour
 
     /////////////////////////////////////////////////////////////
 
+    void RefreshPosition()
+    {
+        Vector3 position = transform.localPosition;
+        position.y = elevation * HexMetrics.elevationStep;
+        position.y += // causa rumore sull'altezza
+                    (HexMetrics.SampleNoise(position).y * 2f - 1f) * HexMetrics.elevationPerturbStrength;
+        transform.localPosition = position;
+
+        Vector3 uiPosition = uiRect.localPosition;
+        uiPosition.z = -position.y;
+        uiRect.localPosition = uiPosition;
+    }
 
     public HexCell GetNeighbor(HexDirection direction)
     {
@@ -407,6 +415,75 @@ public class HexCell : MonoBehaviour
 
 
 
+    public void Save(BinaryWriter writer)// load e save devono avere le cose che coincidono come ordine e tipo
+    {
+        writer.Write((byte)terrainTypeIndex);
+        writer.Write((byte)elevation);
+        writer.Write((byte)waterLevel);
+        writer.Write((byte)urbanLevel);
+        writer.Write((byte)farmLevel);
+        writer.Write((byte)plantLevel);
+        writer.Write((byte)specialIndex);
+        writer.Write(walled);
+
+        if (hasIncomingRiver) {
+            writer.Write((byte)(incomingRiver + 128));
+        }
+        else {
+            writer.Write((byte)0);
+        }
+
+        if (hasOutgoingRiver) {
+            writer.Write((byte)(outgoingRiver + 128));
+        }
+        else {
+            writer.Write((byte)0);
+        }
+
+        int roadFlags = 0;
+        for (int i = 0; i < roads.Length; i++) {
+            if (roads[i]) {
+                roadFlags |= (1 << i); // << fa bitwise shift a sinistra di i posizioni
+            }
+        }
+        writer.Write((byte)roadFlags);
+    }
+
+    public void Load(BinaryReader reader)// load e save devono avere le cose che coincidono come ordine etipo
+    {// . ReadInt32 per gli int
+        terrainTypeIndex = reader.ReadByte();
+        elevation = reader.ReadByte();
+        RefreshPosition();  //sistema l'elevazione
+        waterLevel = reader.ReadByte();
+        urbanLevel = reader.ReadByte();
+        farmLevel = reader.ReadByte();
+        plantLevel = reader.ReadByte();
+        specialIndex = reader.ReadByte();
+        walled = reader.ReadBoolean();
+
+        byte riverData = reader.ReadByte();
+        if (riverData >= 128) {
+            hasIncomingRiver = true;
+            incomingRiver = (HexDirection)(riverData - 128);
+        }
+        else {
+            hasIncomingRiver = false;
+        }
+
+        riverData = reader.ReadByte();
+        if (riverData >= 128) {
+            hasOutgoingRiver = true;
+            outgoingRiver = (HexDirection)(riverData - 128);
+        }
+        else {
+            hasOutgoingRiver = false;
+        }
+
+        int roadFlags = reader.ReadByte();
+        for (int i = 0; i < roads.Length; i++) {
+            roads[i] = (roadFlags & (1 << i)) != 0; // & singola fa l'AND su 1 bit
+        }
+    }
 
 
 }

@@ -1,16 +1,15 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class HexMapEditor : MonoBehaviour
 {
 	public HexGrid hexGrid;
 
-	public Color[] colors;
-	private Color activeColor;
-
 	int activeElevation, activeWaterLevel, activeUrbanLevel, activeFarmLevel, activePlantLevel, activeSpecialIndex;
+	int activeTerrainTypeIndex;
 	bool applyElevation = true, applyWaterLevel = true;
-	bool applyColor, applyUrbanLevel, applyFarmLevel, applyPlantLevel, applySpecialIndex;
+	bool applyUrbanLevel, applyFarmLevel, applyPlantLevel, applySpecialIndex;
 	int brushSize;
 
 
@@ -25,10 +24,6 @@ public class HexMapEditor : MonoBehaviour
 	////////////////////////////////////////////////////////////////////
 
 
-	void Awake()
-	{
-		SelectColor(0);
-	}
 
 	void Update()
 	{
@@ -71,8 +66,8 @@ public class HexMapEditor : MonoBehaviour
 	void EditCell(HexCell cell)
 	{
 		if (cell) {
-			if (applyColor) {
-				cell.Color = activeColor;
+			if (activeTerrainTypeIndex >= 0) {
+				cell.TerrainTypeIndex = activeTerrainTypeIndex;
 			}
 			if (applyElevation) {
 				cell.Elevation = activeElevation;
@@ -138,15 +133,11 @@ public class HexMapEditor : MonoBehaviour
 
 
 	////////////////////////////////////////////
-    #region metodi UI
+	#region metodi UI (Set)
 
-
-    public void SelectColor(int index)
+	public void SetTerrainTypeIndex(int index)
 	{
-		applyColor = index >= 0;
-		if (applyColor) {
-			activeColor = colors[index];
-		}
+		activeTerrainTypeIndex = index;
 	}
 
 	public void SetElevation(float elevation)
@@ -236,5 +227,35 @@ public class HexMapEditor : MonoBehaviour
 
 
 	#endregion
+
+
+
+
+	public void Save()
+	{
+		//string path = Path.Combine(Application.persistentDataPath, "test.map"); // lo sbatte in AppData
+		string path = "test.map"; 
+
+		using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create))) {
+			writer.Write(0);  //header
+			hexGrid.Save(writer);
+		}
+	}
+
+	public void Load()
+	{
+		//string path = Path.Combine(Application.persistentDataPath, "test.map");  // lo sbatte in AppData
+		string path = "test.map";
+
+		using (BinaryReader reader = new BinaryReader(File.OpenRead(path))) {
+			int header = reader.ReadInt32(); //header
+			if (header == 0) {
+				hexGrid.Load(reader);
+			}
+			else {
+				Debug.LogWarning("Unknown map format " + header);
+			}
+		}
+	}
 }
 

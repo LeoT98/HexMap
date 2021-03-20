@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+
+
 // valori numerici sulle dimensioni dell'esagono e altre robe
 public static class HexMetrics
 {
@@ -76,6 +78,10 @@ public static class HexMetrics
 	public const float wallTowerThreshold = 0.66f; //probabilità che metta una torre
 	public const float wallYOffset = -1f; //muri e torri un po sommersi per evitare buchi
 	public const float bridgeDesignLength = 7f; //lunghezza (z) del prefab Bridge 
+
+
+	public static Color[] colors;// colori delle celle, inizializzato da HexGrid
+
 
 	/// ////////////////////////////////////////////////////////
 
