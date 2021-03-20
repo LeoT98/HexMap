@@ -68,7 +68,6 @@ public class HexCell : MonoBehaviour
             return hasIncomingRiver;
         }
     }
-
     public bool HasOutgoingRiver {
         get {
             return hasOutgoingRiver;
@@ -81,7 +80,6 @@ public class HexCell : MonoBehaviour
             return incomingRiver;
         }
     }
-
     public HexDirection OutgoingRiver {
         get {
             return outgoingRiver;
@@ -206,8 +204,26 @@ public class HexCell : MonoBehaviour
                 RefreshSelfOnly();
             }
         }
-    }
+    } 
     int  plantLevel;
+
+    public int SpecialIndex {
+        get {
+            return specialIndex;
+        }
+        set {
+            if (specialIndex != value && !HasRiver) {
+                specialIndex = value;
+                RefreshSelfOnly();
+            }
+        }
+    }
+    int specialIndex;// per le feature grosse
+    public bool IsSpecial {//specialIndex == 0 indica che non c'è la special feature
+        get {
+            return specialIndex > 0;
+        }
+    }
 
     //Walls
     public bool Walled {
@@ -326,10 +342,12 @@ public class HexCell : MonoBehaviour
         //aggiunge nuovo fiume
         hasOutgoingRiver = true;
         outgoingRiver = direction;
- //    RefreshSelfOnly();  ci pensa la strada a refreshare
+        specialIndex = 0; // il fiume toglie le special feature
+        //    RefreshSelfOnly();  ci pensa la strada a refreshare
         neighbor.RemoveIncomingRiver();
         neighbor.hasIncomingRiver = true;
         neighbor.incomingRiver = direction.Opposite();
+        neighbor.specialIndex = 0;  // il fiume toglie le special feature
         //  neighbor.RefreshSelfOnly();  ci pensa la strada a refreshare
 
         SetRoad((int)direction, false);  //si occupa anche dei refresh;

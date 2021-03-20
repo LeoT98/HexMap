@@ -916,4 +916,10 @@ MonoBehaviour:
   - prefabs:
     - {fileID: 1912692846031301190, guid: b996bd99335a43344a85be50a8158e53, type: 3}
     - {fileID: 1912692846031301190, guid: 373b6dce2d08c8f4b814aba53480925c, type: 3}
+  special:
+  - {fileID: 7421104805811679626, guid: df18550e8d492ca4292ff40549933ad7, type: 3}
+  - {fileID: 8428042256405519161, guid: b1555aa76f4972c40bf6fa39ec68a4e1, type: 3}
+  - {fileID: 2918096005954782340, guid: d4a40135914ca63408bf3952ef2253ef, type: 3}
   walls: {fileID: 6890934062716818080}
+  wallTower: {fileID: 7897893753394417216, guid: dbdd1e1872b732f489606f64edf1f3cb, type: 3}
+  bridge: {fileID: 4731524490603089329, guid: ded37cec10008c94685a705d808bef1b, type: 3}

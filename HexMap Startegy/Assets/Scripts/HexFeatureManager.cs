@@ -2,12 +2,18 @@
 
 public class HexFeatureManager : MonoBehaviour
 {
-	public HexFeatureCollection[]   //contengono i prefabs delle varie features
-			urbanCollections, farmCollections, plantCollections; 
+	public HexFeatureCollection[]   //contengono i prefabs delle features piccole, tante per hex
+			urbanCollections, farmCollections, plantCollections;
+
+	public Transform[] special; //feature grosse, 1 per hex
 
 	Transform container; //ci butto le feature create per cancellarle più veloce
 
 	public HexMesh walls;
+
+	public Transform wallTower, bridge;
+
+
 
 	public void Clear() {
 		if (container) {
@@ -24,6 +30,10 @@ public class HexFeatureManager : MonoBehaviour
 	}
 
 	public void AddFeature(HexCell cell, Vector3 position) {
+		if (cell.IsSpecial) { //la feature speciale rimuove quelle normali
+			return;
+		}
+
 		HexHash hash = HexMetrics.SampleHashGrid(position);
 		Transform prefab = PickPrefab(urbanCollections, cell.UrbanLevel, hash.a, hash.d);
 		Transform otherPrefab = PickPrefab(farmCollections, cell.FarmLevel, hash.b, hash.d);
@@ -75,6 +85,17 @@ public class HexFeatureManager : MonoBehaviour
 		return null;
 	}
 
+	public void AddSpecialFeature(HexCell cell, Vector3 position)
+	{
+		Transform instance = Instantiate(special[cell.SpecialIndex - 1]);
+		instance.localPosition = HexMetrics.Perturb(position);
+		HexHash hash = HexMetrics.SampleHashGrid(position);
+		instance.localRotation = Quaternion.Euler(0f, 360f * hash.e, 0f);
+		instance.SetParent(container, false);
+	}
+
+
+
 	//mette il muro sui lati tra 2 celle
 	public void AddWall(EdgeVertices near, HexCell nearCell, EdgeVertices far, HexCell farCell, bool hasRiver, bool hasRoad)
 	{
@@ -97,7 +118,7 @@ public class HexFeatureManager : MonoBehaviour
 	}
 
 	//mette il muro sul lato tra 2 celle
-	void AddWallSegment(Vector3 nearLeft, Vector3 farLeft, Vector3 nearRight, Vector3 farRight)
+	void AddWallSegment(Vector3 nearLeft, Vector3 farLeft, Vector3 nearRight, Vector3 farRight,bool addTower = false)
 	{
 		nearLeft = HexMetrics.Perturb(nearLeft);
 		farLeft = HexMetrics.Perturb(farLeft);
@@ -129,6 +150,16 @@ public class HexFeatureManager : MonoBehaviour
 		walls.AddQuadUnperturbed(v2, v1, v4, v3);
 
 		walls.AddQuadUnperturbed(t1, t2, v3, v4); //sopra del muro
+
+		//aggiunge torri
+		if (addTower) {
+			Transform towerInstance = Instantiate(wallTower);
+			towerInstance.transform.localPosition = (left + right) * 0.5f;
+			Vector3 rightDirection = right - left;
+			rightDirection.y = 0f;
+			towerInstance.transform.right = rightDirection;
+			towerInstance.SetParent(container, false);
+		}
 	}
 
 	//questo riempie sulle intersezioni tra 3 celle
@@ -179,7 +210,12 @@ public class HexFeatureManager : MonoBehaviour
 
 		if (hasLeftWall) {
 			if (hasRighWall) {
-				AddWallSegment(pivot, left, pivot, right);
+				bool hasTower = false;
+				if (leftCell.Elevation == rightCell.Elevation) {//no torri se elevazione diversa
+					HexHash hash = HexMetrics.SampleHashGrid((pivot + left + right) * (1f / 3f));
+					hasTower = hash.e < HexMetrics.wallTowerThreshold;
+				}
+				AddWallSegment(pivot, left, pivot, right, hasTower);
 			}
 			else if (leftCell.Elevation < rightCell.Elevation) {
 				AddWallWedge(pivot, left, right);
@@ -196,6 +232,7 @@ public class HexFeatureManager : MonoBehaviour
 				AddWallCap(right, pivot);
 			}
 		}
+
 
 	}
 
@@ -238,4 +275,24 @@ public class HexFeatureManager : MonoBehaviour
 		walls.AddQuadUnperturbed(point, v2, pointTop, v4);
 		walls.AddTriangleUnperturbed(pointTop, v3, v4);
 	}
+
+
+	public void AddBridge(Vector3 roadCenter1, Vector3 roadCenter2)
+	{
+		roadCenter1 = HexMetrics.Perturb(roadCenter1);
+		roadCenter2 = HexMetrics.Perturb(roadCenter2);
+		Transform instance = Instantiate(bridge);
+		instance.localPosition = (roadCenter1 + roadCenter2) * 0.5f;
+		instance.forward = roadCenter2 - roadCenter1;
+
+		float length = Vector3.Distance(roadCenter1, roadCenter2);
+		instance.localScale = new Vector3(1f, 1f, length * (1f / HexMetrics.bridgeDesignLength));
+		instance.SetParent(container, false);
+	}
+
+
+
+
+
+
 }

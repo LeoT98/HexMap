@@ -6,9 +6,9 @@ public static class HexMetrics
 	//dimensioni esagoni
 	public const float outerToInner = 0.866025404f; //serve per conversione
 	public const float innerToOuter = 1f / outerToInner; //serve per conversione
-	public const float outerRadius = 10f;
+	public const float outerRadius = 10f; //dimensione esagono
 	public const float innerRadius = outerRadius * outerToInner;
-	public const float elevationStep = 4f;
+	public const float elevationStep = 4f; //altezza
 
 	//per il terrazzamento
 	public const int terracesPerSlope = 2;
@@ -70,9 +70,12 @@ public static class HexMetrics
 		new float[] {0.4f, 0.6f, 0.9f}
 	};
 
-	public const float wallHeight = 3f; //altezza muri
-	public const float wallThickness = 0.75f; //spessore
+	public const float wallHeight = 4.2f; //altezza muri
+	public const float wallThickness = 0.7f; //spessore
 	public const float wallElevationOffset = verticalTerraceStepSize;
+	public const float wallTowerThreshold = 0.66f; //probabilità che metta una torre
+	public const float wallYOffset = -1f; //muri e torri un po sommersi per evitare buchi
+	public const float bridgeDesignLength = 7f; //lunghezza (z) del prefab Bridge 
 
 	/// ////////////////////////////////////////////////////////
 
@@ -204,7 +207,7 @@ public static class HexMetrics
 		near.z += (far.z - near.z) * 0.5f;
 		float v =
 			near.y < far.y ? wallElevationOffset : (1f - wallElevationOffset);
-		near.y += (far.y - near.y) * v;
+		near.y += (far.y - near.y) * v + wallYOffset;
 		return near;
 	}
 
