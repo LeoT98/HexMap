@@ -14,6 +14,19 @@ public class HexMapCamera : MonoBehaviour
 
 	public HexGrid grid; //serve per non allontanarsi dalla griglia
 
+	static HexMapCamera instance;
+	public static bool Locked {
+		set {
+			instance.enabled = !value;
+		}
+	}
+
+
+	void OnEnable()
+	{
+		instance = this;
+	}
+
 	void Awake()
 	{
 		swivel = transform.GetChild(0);
@@ -63,12 +76,10 @@ public class HexMapCamera : MonoBehaviour
 	//evita di uscire dalla griglia
 	Vector3 ClampPosition(Vector3 position)
 	{
-		float xMax =
-			grid.chunkCountX * HexMetrics.chunkSizeX * (2f * HexMetrics.innerRadius);
+		float xMax = (grid.cellCountX - 0.5f) * (2f * HexMetrics.innerRadius);
 		position.x = Mathf.Clamp(position.x, 0f, xMax);
 
-		float zMax =
-			grid.chunkCountZ * HexMetrics.chunkSizeZ *(1.5f * HexMetrics.outerRadius);
+		float zMax = (grid.cellCountZ - 1) * (1.5f * HexMetrics.outerRadius);
 		position.z = Mathf.Clamp(position.z, 0f, zMax);
 
 		return position;
@@ -84,5 +95,14 @@ public class HexMapCamera : MonoBehaviour
 		}
 		transform.localRotation = Quaternion.Euler(0f, rotationAngle, 0f);
 	}
+
+	public static void ValidatePosition()
+	{
+		instance.AdjustPosition(0f, 0f);
+	}
+
+
+
+
 
 }
