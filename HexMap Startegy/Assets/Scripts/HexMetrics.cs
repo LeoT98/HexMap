@@ -80,9 +80,6 @@ public static class HexMetrics
 	public const float bridgeDesignLength = 7f; //lunghezza (z) del prefab Bridge 
 
 
-	public static Color[] colors;// colori delle celle, inizializzato da HexGrid
-
-
 	/// ////////////////////////////////////////////////////////
 
 

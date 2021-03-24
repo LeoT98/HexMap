@@ -56,27 +56,28 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\HexFeatureManager.cs" />
-    <Compile Include="Assets\Scripts\ListPool.cs" />
+    <Compile Include="Assets\Scripts\Cose di supporto\ListPool.cs" />
     <Compile Include="Assets\Scripts\HexGrid.cs" />
     <Compile Include="Assets\Scripts\HexMetrics.cs" />
-    <Compile Include="Assets\Scripts\HexHash.cs" />
-    <Compile Include="Assets\Scripts\EdgeVertices.cs" />
-    <Compile Include="Assets\Scripts\HexFeatureCollection.cs" />
-    <Compile Include="Assets\Scripts\HexMapCamera.cs" />
+    <Compile Include="Assets\Scripts\Cose di supporto\HexHash.cs" />
+    <Compile Include="Assets\Scripts\Cose di supporto\EdgeVertices.cs" />
+    <Compile Include="Assets\Scripts\Gestione mappe\NewMapMenu.cs" />
+    <Compile Include="Assets\Scripts\Cose di supporto\HexFeatureCollection.cs" />
+    <Compile Include="Assets\Scripts\Gestione mappe\SaveLoadItem.cs" />
+    <Compile Include="Assets\Scripts\Gestione mappe\SaveLoadMenu.cs" />
+    <Compile Include="Assets\Scripts\Cose di supporto\HexMapCamera.cs" />
     <Compile Include="Assets\Scripts\HexMapEditor.cs" />
     <Compile Include="Assets\Scripts\HexMesh.cs" />
-    <Compile Include="Assets\Scripts\HexDirection.cs" />
-    <Compile Include="Assets\Scripts\HexCoordinates.cs" />
-    <Compile Include="Assets\Scripts\HexEdgeType.cs" />
+    <Compile Include="Assets\Scripts\Cose di supporto\HexDirection.cs" />
+    <Compile Include="Assets\Scripts\Cose di supporto\HexCoordinates.cs" />
+    <Compile Include="Assets\Scripts\Cose di supporto\HexEdgeType.cs" />
     <Compile Include="Assets\Scripts\HexGridChunk.cs" />
     <Compile Include="Assets\Scripts\HexCell.cs" />
-    <Compile Include="Assets\Scripts\NewMapMenu.cs" />
-    <Compile Include="Assets\Scripts\SaveLoadMenu.cs" />
-    <Compile Include="Assets\Scripts\SaveLoadItem.cs" />
+    <Compile Include="Assets\Scripts\TextureArrayWizard.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Scripts\Shaders\Water.shader" />
-     <None Include="Assets\Scripts\Shaders\VertexColors.shader" />
+     <None Include="Assets\Scripts\Shaders\Terrain.shader" />
      <None Include="Assets\Scripts\Shaders\Estuary.shader" />
      <None Include="Assets\Scripts\Shaders\WaterShore.shader" />
      <None Include="Assets\Scripts\Shaders\Water.cginc" />

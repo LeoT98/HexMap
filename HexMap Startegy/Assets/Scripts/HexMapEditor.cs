@@ -114,6 +114,7 @@ public class HexMapEditor : MonoBehaviour
 		}
 	}
 
+	//per quando uso brush
 	void EditCells(HexCell center)
 	{
 		int centerX = center.coordinates.X;
