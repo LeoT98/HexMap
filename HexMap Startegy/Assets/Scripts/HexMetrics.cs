@@ -39,6 +39,8 @@ public static class HexMetrics
 	public const float waterFactor = 0.6f; //come il solid factor ma per il bordo con le ondine dell'acqua, minore del solid factor
 	public const float waterBlendFactor = 1f - waterFactor;
 
+	//In HexCell c'è una variabile per la delta altezza massima delle strade
+
 	//posizione dei vertici in relazione al centro
 	static Vector3[] corners = {
 		new Vector3(0f, 0f, outerRadius),

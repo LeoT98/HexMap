@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HexCell : MonoBehaviour
 {
@@ -9,6 +10,18 @@ public class HexCell : MonoBehaviour
 
     [SerializeField]
     HexCell[] neighbors;
+
+    public int Distance
+    {
+        get {
+            return distance;
+        }
+        set {
+            distance = value;
+            UpdateDistanceLabel();
+        }
+    }
+    int distance;
 
     public int Elevation {
         get {
@@ -144,7 +157,7 @@ public class HexCell : MonoBehaviour
     [SerializeField]
     bool[] roads;  //nell inspector metterlo con size=6
     [SerializeField]
-    int roadMaxDeltaElevation = 2; //max differenza di altezza per cui posso mettere una strada
+    int roadMaxDeltaElevation = 1; //max differenza di altezza per cui posso mettere una strada
 
     public bool HasRoads {
         get {
@@ -478,6 +491,16 @@ public class HexCell : MonoBehaviour
             roads[i] = (roadFlags & (1 << i)) != 0; // & singola fa l'AND su 1 bit
         }
     }
+
+    void UpdateDistanceLabel()
+    {
+        Text label = uiRect.GetComponent<Text>();
+        label.text = distance == int.MaxValue ? "" : distance.ToString();
+    }
+
+
+
+
 
 
 }

@@ -43,17 +43,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b64be7c4dda619848bd2230991f48b67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkCountX: 4
-  chunkCountZ: 3
-  chunkPrefab: {fileID: 0}
+  cellCountX: 18
+  cellCountZ: 18
+  chunkPrefab: {fileID: 6792945038723563540, guid: e9aba4feaeba9254fa274972c7bd9669, type: 3}
   cellPrefab: {fileID: 7058479050626653984, guid: 4f31f3510844091429e2ba24d25ab55a, type: 3}
   cellLabelPrefab: {fileID: 7452378139513781427, guid: 304bcaf9fb4aff748852ba843b3560fc, type: 3}
   touchedColor: {r: 1, g: 0, b: 1, a: 1}
   noiseSource: {fileID: 2800000, guid: 07db2c4966d481f4eaf66274dc0d4829, type: 3}
   seed: 0
-  colors:
-  - {r: 1, g: 0.87076926, b: 0, a: 1}
-  - {r: 0, g: 1, b: 0, a: 1}
-  - {r: 0, g: 0, b: 1, a: 1}
-  - {r: 1, g: 1, b: 1, a: 1}
-  - {r: 0.5647059, g: 0.30980393, b: 0, a: 1}

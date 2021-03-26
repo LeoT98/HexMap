@@ -6,7 +6,7 @@ public class HexGridChunk : MonoBehaviour
 	HexCell[] cells;
 
 	public HexMesh terrain, rivers, roads, water, waterShore, estuaries;
-	Canvas gridCanvas;
+	Canvas gridCanvas; //è per le etichette sugli hex
 	public HexFeatureManager features;
 
 	//per le il blending delle texture
@@ -18,7 +18,7 @@ public class HexGridChunk : MonoBehaviour
 	{
 		gridCanvas = GetComponentInChildren<Canvas>();
 		cells = new HexCell[HexMetrics.chunkSizeX * HexMetrics.chunkSizeZ];
-		ShowUI(false);
+//		ShowUI(false);
 	}
 
 

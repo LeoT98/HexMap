@@ -3,17 +3,17 @@
 [System.Serializable]
 public struct HexCoordinates
 {
-	public int X, Z;
-	public int Y {
+	public int x, z;
+	public int y {
 		get {
-			return -X - Z;
+			return -x - z;
 		}
 	}
 
 	public HexCoordinates(int x, int z)
 	{
-		X = x;
-		Z = z;
+		this.x = x;
+		this.z = z;
 	}
 
 //da posiszione da coordinate non allineate
@@ -48,7 +48,14 @@ public struct HexCoordinates
 		return new HexCoordinates(iX, iZ);
 	}
 
-
+	//distanza di 2 celle basata sulle coordinate
+	public int DistanceTo(HexCoordinates other)
+	{
+		return
+			((x < other.x ? other.x - x : x - other.x) +
+			(y < other.y ? other.y - y : y - other.y) +
+			(z < other.z ? other.z - z : z - other.z)) / 2;
+	}
 
 
 
@@ -57,11 +64,11 @@ public struct HexCoordinates
 
 	public override string ToString()
 	{
-		return "(" +X.ToString() + ", " + Y.ToString() + ", " + Z.ToString() + ")";
+		return "(" +x.ToString() + ", " + y.ToString() + ", " + z.ToString() + ")";
 	}
 	public string ToStringOnSeparateLines()
 	{
-		return X.ToString() + "\n" + Y.ToString() + "\n" + Z.ToString();
+		return x.ToString() + "\n" + y.ToString() + "\n" + z.ToString();
 	}
 
 

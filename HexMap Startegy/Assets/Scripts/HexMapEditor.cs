@@ -10,8 +10,10 @@ public class HexMapEditor : MonoBehaviour
 	int activeTerrainTypeIndex;
 	bool applyElevation = true, applyWaterLevel = true;
 	bool applyUrbanLevel, applyFarmLevel, applyPlantLevel, applySpecialIndex;
+	bool editMode;
 	int brushSize;
 
+	public Material terrainMaterial;
 
 	enum OptionalToggle   { Ignore, Yes, No } // yes aggiunge, no rimuove
 	OptionalToggle riverMode, roadMode, walledMode;
@@ -45,7 +47,15 @@ public class HexMapEditor : MonoBehaviour
 			} else {
 				isDrag = false;
 			}
-			EditCells(currentCell);
+
+			if (editMode)
+			{
+				EditCells(currentCell);
+			}
+			else
+			{
+				hexGrid.FindDistancesTo(currentCell);
+			}
 			previousCell = currentCell;
 		} else {
 			previousCell = null;
@@ -117,8 +127,8 @@ public class HexMapEditor : MonoBehaviour
 	//per quando uso brush
 	void EditCells(HexCell center)
 	{
-		int centerX = center.coordinates.X;
-		int centerZ = center.coordinates.Z;
+		int centerX = center.coordinates.x;
+		int centerZ = center.coordinates.z;
 
 		for (int r = 0, z = centerZ - brushSize; z <= centerZ; z++, r++) {// riga centrale e metà sotto
 			for (int x = centerX - r; x <= centerX + brushSize; x++) {
@@ -132,6 +142,11 @@ public class HexMapEditor : MonoBehaviour
 		}
 	}
 
+
+	void Awake()
+	{
+		terrainMaterial.DisableKeyword("GRID_ON");
+	}
 
 	////////////////////////////////////////////
 	#region metodi UI (Set)
@@ -156,10 +171,13 @@ public class HexMapEditor : MonoBehaviour
 		brushSize = (int)size;
 	}
 
+	/*
+	 * rimosso perchè l'ui viene accesa\spenta con l'edit mode
 	public void ShowUI(bool visible)
 	{
 		hexGrid.ShowUI(visible);
 	}
+	*/
 
 	public void SetRiverMode(int mode)
 	{
@@ -226,13 +244,35 @@ public class HexMapEditor : MonoBehaviour
 		activeSpecialIndex = (int)index;
 	}
 
+	//attiva e disattiva la griglia
+	public void ShowGrid(bool visible)
+	{
+		if (visible)
+		{
+			terrainMaterial.EnableKeyword("GRID_ON");
+		}
+		else
+		{
+			terrainMaterial.DisableKeyword("GRID_ON");
+		}
+	}
+
+	public void SetEditMode(bool toggle)
+	{
+		editMode = toggle;
+		hexGrid.ShowUI(!toggle);
+		ShowGrid(toggle);
+
+	}
+
+
 
 	#endregion
 
 
 
 
-	
+
 
 }
 
