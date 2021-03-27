@@ -23,6 +23,8 @@ public class HexMapEditor : MonoBehaviour
 	HexDirection dragDirection;
 	HexCell previousCell;
 
+	HexCell searchFromCell, searchToCell;// partenza e arrivo pathfinding
+
 	////////////////////////////////////////////////////////////////////
 
 
@@ -52,9 +54,23 @@ public class HexMapEditor : MonoBehaviour
 			{
 				EditCells(currentCell);
 			}
-			else
-			{
-				hexGrid.FindDistancesTo(currentCell);
+			else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
+			{// imposta partenza pathfinding
+				if (searchFromCell)
+				{
+					searchFromCell.DisableHighlight();
+				}
+				searchFromCell = currentCell;
+				searchFromCell.EnableHighlight(Color.blue);
+				if (searchToCell)
+				{//serve per camiare gli estemi del pathfinding durante il calcolo
+					hexGrid.FindPath(searchFromCell, searchToCell);
+				}
+			}
+			else if (searchFromCell && searchFromCell != currentCell)
+			{// fine pathfinding ed esecuzione
+				searchToCell = currentCell;
+				hexGrid.FindPath(searchFromCell, searchToCell);
 			}
 			previousCell = currentCell;
 		} else {
@@ -261,7 +277,7 @@ public class HexMapEditor : MonoBehaviour
 	{
 		editMode = toggle;
 		hexGrid.ShowUI(!toggle);
-		ShowGrid(toggle);
+		//ShowGrid(toggle);
 
 	}
 

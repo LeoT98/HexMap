@@ -44,8 +44,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coordinates:
-    X: 0
-    Z: 0
+    x: 0
+    z: 0
   chunk: {fileID: 0}
   uiRect: {fileID: 0}
   neighbors:
@@ -56,3 +56,4 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   roads: 000000000000
+  roadMaxDeltaElevation: 1

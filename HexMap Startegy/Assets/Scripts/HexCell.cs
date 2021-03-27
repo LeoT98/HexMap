@@ -11,17 +11,7 @@ public class HexCell : MonoBehaviour
     [SerializeField]
     HexCell[] neighbors;
 
-    public int Distance
-    {
-        get {
-            return distance;
-        }
-        set {
-            distance = value;
-            UpdateDistanceLabel();
-        }
-    }
-    int distance;
+    
 
     public int Elevation {
         get {
@@ -242,6 +232,27 @@ public class HexCell : MonoBehaviour
     }
     bool walled;
 
+    //Pathfinding
+    public int Distance  //distanza di questa cella dalla dalla partenza
+    {
+        get {
+            return distance;
+        }
+        set {
+            distance = value;
+            UpdateDistanceLabel();
+        }
+    } 
+    int distance;
+    public HexCell PathFrom { get; set; }//serve per pathfinding
+    public int SearchHeuristic { get; set; }// stima della distanza minima
+    public int SearchPriority
+    {
+        get {
+            return distance + SearchHeuristic;
+        }
+    }
+    public HexCell NextWithSamePriority { get; set; }//serve per fare linked list in HexCellPriorityQueue
 
 
     /////////////////////////////////////////////////////////////
@@ -421,6 +432,26 @@ public class HexCell : MonoBehaviour
     }
 
 
+    void UpdateDistanceLabel()
+    {
+        Text label = uiRect.GetComponent<Text>();
+        label.text = distance == int.MaxValue ? "" : distance.ToString();
+    }
+
+
+    public void DisableHighlight()
+    {
+        Image highlight = uiRect.GetChild(0).GetComponent<Image>();
+        highlight.enabled = false;
+    }
+
+    public void EnableHighlight(Color color)
+    {
+        Image highlight = uiRect.GetChild(0).GetComponent<Image>();
+        highlight.color = color;
+        highlight.enabled = true;
+    }
+
 
     public void Save(BinaryWriter writer)// load e save devono avere le cose che coincidono come ordine e tipo
     {
@@ -433,23 +464,29 @@ public class HexCell : MonoBehaviour
         writer.Write((byte)specialIndex);
         writer.Write(walled);
 
-        if (hasIncomingRiver) {
+        if (hasIncomingRiver)
+        {
             writer.Write((byte)(incomingRiver + 128));
         }
-        else {
+        else
+        {
             writer.Write((byte)0);
         }
 
-        if (hasOutgoingRiver) {
+        if (hasOutgoingRiver)
+        {
             writer.Write((byte)(outgoingRiver + 128));
         }
-        else {
+        else
+        {
             writer.Write((byte)0);
         }
 
         int roadFlags = 0;
-        for (int i = 0; i < roads.Length; i++) {
-            if (roads[i]) {
+        for (int i = 0; i < roads.Length; i++)
+        {
+            if (roads[i])
+            {
                 roadFlags |= (1 << i); // << fa bitwise shift a sinistra di i posizioni
             }
         }
@@ -469,38 +506,32 @@ public class HexCell : MonoBehaviour
         walled = reader.ReadBoolean();
 
         byte riverData = reader.ReadByte();
-        if (riverData >= 128) {
+        if (riverData >= 128)
+        {
             hasIncomingRiver = true;
             incomingRiver = (HexDirection)(riverData - 128);
         }
-        else {
+        else
+        {
             hasIncomingRiver = false;
         }
 
         riverData = reader.ReadByte();
-        if (riverData >= 128) {
+        if (riverData >= 128)
+        {
             hasOutgoingRiver = true;
             outgoingRiver = (HexDirection)(riverData - 128);
         }
-        else {
+        else
+        {
             hasOutgoingRiver = false;
         }
 
         int roadFlags = reader.ReadByte();
-        for (int i = 0; i < roads.Length; i++) {
+        for (int i = 0; i < roads.Length; i++)
+        {
             roads[i] = (roadFlags & (1 << i)) != 0; // & singola fa l'AND su 1 bit
         }
     }
-
-    void UpdateDistanceLabel()
-    {
-        Text label = uiRect.GetComponent<Text>();
-        label.text = distance == int.MaxValue ? "" : distance.ToString();
-    }
-
-
-
-
-
 
 }

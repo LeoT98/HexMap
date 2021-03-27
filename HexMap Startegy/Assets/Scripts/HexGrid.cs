@@ -21,6 +21,9 @@ public class HexGrid : MonoBehaviour
 	public Texture2D noiseSource;
 
 	public int seed;
+
+	HexCellPriorityQueue searchFrontier;
+
 	/// //////////////////////////////////////////////////////////////
 
 	void OnEnable()
@@ -167,29 +170,50 @@ public class HexGrid : MonoBehaviour
 	}
 
 
-	public void FindDistancesTo(HexCell cell)
+	public void FindPath(HexCell fromCell, HexCell toCell)
 	{
 		StopAllCoroutines();
-		StartCoroutine(Search(cell));
+		StartCoroutine(Search(fromCell, toCell));
 	}
 
-	IEnumerator Search(HexCell cell)
-	{//fa Dijkstra
+	IEnumerator Search(HexCell fromCell, HexCell toCell)
+	{
+		if (searchFrontier == null)
+		{// posso inizializzarlo nello start ed evitare l'if
+			searchFrontier = new HexCellPriorityQueue();
+		}
+		else
+		{//va pulito prima di ogni utilizzo
+			searchFrontier.Clear();
+		}
+
 		for (int i = 0; i < cells.Length; i++)
 		{//inizializza le distanze al maassimo
 			cells[i].Distance = int.MaxValue;
+			cells[i].DisableHighlight();
 		}
+		fromCell.EnableHighlight(Color.blue);
+		toCell.EnableHighlight(Color.red);
 
 		WaitForSeconds delay = new WaitForSeconds(1 / 60f);
-		List<HexCell> frontier = new List<HexCell>();
-		cell.Distance = 0;
-		frontier.Add(cell);
+		fromCell.Distance = 0;
+		searchFrontier.Enqueue(fromCell);
 
-		while (frontier.Count > 0)
+		while (searchFrontier.Count > 0)
 		{
 			yield return delay;
-			HexCell current = frontier[0];
-			frontier.RemoveAt(0);
+			HexCell current = searchFrontier.Dequeue();
+
+			if (current == toCell)
+			{//sono arrivato a destinazione
+				current = current.PathFrom;
+				while (current != fromCell)
+				{//evidenzia il percorso più veloce
+					current.EnableHighlight(Color.white);
+					current = current.PathFrom;
+				}
+				break;
+			}
 
 			for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
 			{
@@ -225,15 +249,22 @@ public class HexGrid : MonoBehaviour
 				}
 
 				if (neighbor.Distance == int.MaxValue)
-				{
+				{//cella non ancora visitata
 					neighbor.Distance = distance;
-					frontier.Add(neighbor);
+					neighbor.PathFrom = current;
+
+				//Come euristica metto distanza minima perchè ipotizzo strada (costo 1)
+					neighbor.SearchHeuristic = neighbor.coordinates.DistanceTo(toCell.coordinates);
+
+					searchFrontier.Enqueue(neighbor);
 				}
 				else if (distance < neighbor.Distance)
-				{
+				{//cella già visitata ma ho trovato percorso migliore
+					int oldPriority = neighbor.SearchPriority;
 					neighbor.Distance = distance;
+					neighbor.PathFrom = current;
+					searchFrontier.Change(neighbor, oldPriority);
 				}
-				frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
 			}
 		}
 	}
