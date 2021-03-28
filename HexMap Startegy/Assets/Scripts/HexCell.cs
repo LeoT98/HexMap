@@ -240,7 +240,6 @@ public class HexCell : MonoBehaviour
         }
         set {
             distance = value;
-            UpdateDistanceLabel();
         }
     } 
     int distance;
@@ -253,7 +252,8 @@ public class HexCell : MonoBehaviour
         }
     }
     public HexCell NextWithSamePriority { get; set; }//serve per fare linked list in HexCellPriorityQueue
-
+    public int SearchPhase { get; set; } //dice se devo ancora controllare la cella ( < ), è nella frontiera ( = ), l'ho già controllata ( > ). 
+                                                          //In relazioene al valore di searchFrontierPhase in HexGrid
 
     /////////////////////////////////////////////////////////////
 
@@ -431,11 +431,10 @@ public class HexCell : MonoBehaviour
         RefreshSelfOnly();
     }
 
-
-    void UpdateDistanceLabel()
+    public void SetLabel(string text)
     {
-        Text label = uiRect.GetComponent<Text>();
-        label.text = distance == int.MaxValue ? "" : distance.ToString();
+        UnityEngine.UI.Text label = uiRect.GetComponent<Text>();
+        label.text = text;
     }
 
 

@@ -22,7 +22,13 @@ public class HexGrid : MonoBehaviour
 
 	public int seed;
 
+	//Pathfinding
 	HexCellPriorityQueue searchFrontier;
+	int searchFrontierPhase;
+	HexCell currentPathFrom, currentPathTo;
+	bool currentPathExists;
+
+
 
 	/// //////////////////////////////////////////////////////////////
 
@@ -43,14 +49,13 @@ public class HexGrid : MonoBehaviour
 
 	public bool CreateMap(int x, int z)
 	{
-		if (// dimensioni in celle deve essere multiple dimensioni chunks
-			x <= 0 || x % HexMetrics.chunkSizeX != 0 ||
-			z <= 0 || z % HexMetrics.chunkSizeZ != 0
-		) {
+		if ( x <= 0 || x % HexMetrics.chunkSizeX != 0 || z <= 0 || z % HexMetrics.chunkSizeZ != 0)
+		{// dimensioni in celle deve essere multiple dimensioni chunks
 			Debug.LogError("Unsupported map size.");
 			return false;
 		}
 
+		ClearPath();
 		if (chunks != null) {
 			for (int i = 0; i < chunks.Length; i++) {
 				Destroy(chunks[i].gameObject);
@@ -142,7 +147,6 @@ public class HexGrid : MonoBehaviour
 		chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
 	}
 
-
 	public HexCell GetCell(Vector3 position)
 	{
 		position = transform.InverseTransformPoint(position);
@@ -170,14 +174,21 @@ public class HexGrid : MonoBehaviour
 	}
 
 
-	public void FindPath(HexCell fromCell, HexCell toCell)
+	public void FindPath(HexCell fromCell, HexCell toCell, int speed)
 	{
-		StopAllCoroutines();
-		StartCoroutine(Search(fromCell, toCell));
+		ClearPath();
+
+		currentPathFrom = fromCell;
+		currentPathTo = toCell;
+		currentPathExists = Search(fromCell, toCell, speed);
+
+		ShowPath(speed);
 	}
 
-	IEnumerator Search(HexCell fromCell, HexCell toCell)
-	{
+	bool Search(HexCell fromCell, HexCell toCell, int speed)
+	{// se non ho abbastanza movimento per entrare in una cella non ci entro e spreco il movimento
+		searchFrontierPhase += 2; //imposta il valore per cui una cella eè già stata contollata
+
 		if (searchFrontier == null)
 		{// posso inizializzarlo nello start ed evitare l'if
 			searchFrontier = new HexCellPriorityQueue();
@@ -187,39 +198,27 @@ public class HexGrid : MonoBehaviour
 			searchFrontier.Clear();
 		}
 
-		for (int i = 0; i < cells.Length; i++)
-		{//inizializza le distanze al maassimo
-			cells[i].Distance = int.MaxValue;
-			cells[i].DisableHighlight();
-		}
-		fromCell.EnableHighlight(Color.blue);
-		toCell.EnableHighlight(Color.red);
-
-		WaitForSeconds delay = new WaitForSeconds(1 / 60f);
+		fromCell.SearchPhase = searchFrontierPhase;
 		fromCell.Distance = 0;
 		searchFrontier.Enqueue(fromCell);
 
 		while (searchFrontier.Count > 0)
 		{
-			yield return delay;
 			HexCell current = searchFrontier.Dequeue();
+			current.SearchPhase += 1;
 
 			if (current == toCell)
 			{//sono arrivato a destinazione
-				current = current.PathFrom;
-				while (current != fromCell)
-				{//evidenzia il percorso più veloce
-					current.EnableHighlight(Color.white);
-					current = current.PathFrom;
-				}
-				break;
+				return true;
 			}
+
+			int currentTurn = current.Distance / speed;
 
 			for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
 			{
 				HexCell neighbor = current.GetNeighbor(d);
-				if (neighbor == null)
-				{// se le condizioni sono verificate (almeno 1) non considera questo vicino
+				if (neighbor == null || neighbor.SearchPhase > searchFrontierPhase)
+				{// se le condizioni sono verificate non considera questo vicino
 					continue;
 				}
 				if (neighbor.IsUnderwater)
@@ -233,10 +232,10 @@ public class HexGrid : MonoBehaviour
 					continue;
 				}
 
-				int distance = current.Distance;
+				int moveCost;
 				if (current.HasRoadThroughEdge(d))
 				{
-					distance += 1;
+					moveCost = 1;
 				}
 				else if (current.Walled != neighbor.Walled)
 				{//non attraverso i muri se manca la strada
@@ -244,16 +243,25 @@ public class HexGrid : MonoBehaviour
 				}
 				else
 				{
-					distance += (edgeType == HexEdgeType.Flat) ? 5 : 10;
-					distance += neighbor.UrbanLevel + neighbor.FarmLevel + neighbor.PlantLevel;
+					moveCost = (edgeType == HexEdgeType.Flat) ? 5 : 10;
+					moveCost += neighbor.UrbanLevel + neighbor.FarmLevel + neighbor.PlantLevel;
 				}
 
-				if (neighbor.Distance == int.MaxValue)
+				int distance = current.Distance + moveCost;
+				int turn = distance / speed; //arrotonda per difetto
+				if (turn > currentTurn)
+				{
+					distance = turn * speed + moveCost;
+				}
+
+				if (neighbor.SearchPhase < searchFrontierPhase)
 				{//cella non ancora visitata
+					neighbor.SearchPhase = searchFrontierPhase;
 					neighbor.Distance = distance;
 					neighbor.PathFrom = current;
 
-				//Come euristica metto distanza minima perchè ipotizzo strada (costo 1)
+					//Come euristica metto distanza minima perchè ipotizzo strada (costo 1).
+					//Se lo aumento contolla meno starade e potrei perdere percorsi ottimi che però fanno un giro largo
 					neighbor.SearchHeuristic = neighbor.coordinates.DistanceTo(toCell.coordinates);
 
 					searchFrontier.Enqueue(neighbor);
@@ -263,16 +271,55 @@ public class HexGrid : MonoBehaviour
 					int oldPriority = neighbor.SearchPriority;
 					neighbor.Distance = distance;
 					neighbor.PathFrom = current;
+
 					searchFrontier.Change(neighbor, oldPriority);
 				}
 			}
 		}
+		//se arrivo qui ho percorso tutte le strade possibili
+		return false;
 	}
 
+	//disegna percorso sulla mappa
+	void ShowPath(int speed)
+	{
+		if (currentPathExists)
+		{
+			HexCell current = currentPathTo;
+			while (current != currentPathFrom)
+			{
+				int turn = current.Distance / speed;
+				current.SetLabel(turn.ToString());
+				current.EnableHighlight(Color.white);
+				current = current.PathFrom;
+			}
+		}
+		currentPathFrom.EnableHighlight(Color.blue);
+		currentPathTo.EnableHighlight(Color.red);
+	}
 
-
-
-
+	//cancella percorso dalla mappa
+	void ClearPath()
+	{
+		if (currentPathExists)
+		{
+			HexCell current = currentPathTo;
+			while (current != currentPathFrom)
+			{
+				current.SetLabel(null);
+				current.DisableHighlight();
+				current = current.PathFrom;
+			}
+			current.DisableHighlight();
+			currentPathExists = false;
+		}
+		else if (currentPathFrom)
+		{
+			currentPathFrom.DisableHighlight();
+			currentPathTo.DisableHighlight();
+		}
+		currentPathFrom = currentPathTo = null;
+	}
 
 
 
@@ -288,7 +335,7 @@ public class HexGrid : MonoBehaviour
 
 	public void Load(BinaryReader reader, int header)
 	{
-		StopAllCoroutines();
+		ClearPath();
 
 		int x = 18, z = 18;
 		if (header >= 1) {// serve se uso mappe vechie (header=0) che non avevano la dimensione

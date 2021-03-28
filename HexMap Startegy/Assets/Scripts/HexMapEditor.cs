@@ -56,21 +56,27 @@ public class HexMapEditor : MonoBehaviour
 			}
 			else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
 			{// imposta partenza pathfinding
-				if (searchFromCell)
-				{
-					searchFromCell.DisableHighlight();
-				}
-				searchFromCell = currentCell;
-				searchFromCell.EnableHighlight(Color.blue);
-				if (searchToCell)
-				{//serve per camiare gli estemi del pathfinding durante il calcolo
-					hexGrid.FindPath(searchFromCell, searchToCell);
+				if (searchFromCell != currentCell)
+				{//non cerca se è la stessa cella
+					if (searchFromCell)
+					{
+						searchFromCell.DisableHighlight();
+					}
+					searchFromCell = currentCell;
+					searchFromCell.EnableHighlight(Color.blue);
+					if (searchToCell)
+					{//serve per camiare gli estemi del pathfinding durante il calcolo
+						hexGrid.FindPath(searchFromCell, searchToCell, 24);
+					}
 				}
 			}
 			else if (searchFromCell && searchFromCell != currentCell)
-			{// fine pathfinding ed esecuzione
-				searchToCell = currentCell;
-				hexGrid.FindPath(searchFromCell, searchToCell);
+			{// imposta cella di fine pathfinding ed esecuzione
+				if (searchToCell != currentCell)
+				{
+					searchToCell = currentCell;
+					hexGrid.FindPath(searchFromCell, searchToCell, 24);
+				}
 			}
 			previousCell = currentCell;
 		} else {
