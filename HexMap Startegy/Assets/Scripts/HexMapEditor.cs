@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿//using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -10,7 +10,6 @@ public class HexMapEditor : MonoBehaviour
 	int activeTerrainTypeIndex;
 	bool applyElevation = true, applyWaterLevel = true;
 	bool applyUrbanLevel, applyFarmLevel, applyPlantLevel, applySpecialIndex;
-	bool editMode;
 	int brushSize;
 
 	public Material terrainMaterial;
@@ -23,65 +22,64 @@ public class HexMapEditor : MonoBehaviour
 	HexDirection dragDirection;
 	HexCell previousCell;
 
-	HexCell searchFromCell, searchToCell;// partenza e arrivo pathfinding
+	//public HexUnit unitPrefab;
 
 	////////////////////////////////////////////////////////////////////
 
-
+	void Awake()
+	{
+		terrainMaterial.DisableKeyword("GRID_ON");
+		SetEditMode(false); //inizia con editor disattivato
+	}
 
 	void Update()
 	{
-		if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject()) { //blocca i click sui canvas perchè
-			HandleInput();                                                                                                         // l'event system vede solo l'UI
-		} else {																		
-			previousCell = null;
+		if (!EventSystem.current.IsPointerOverGameObject()) //l'EventSystem vede solo l'ui quindi blocca i click sui canvas
+		{
+			if (Input.GetMouseButton(0))
+			{
+				HandleInput();
+				return;
+			}
+			if (Input.GetKeyDown(KeyCode.U))
+			{
+				if (Input.GetKey(KeyCode.LeftShift))
+				{
+					DestroyUnit();
+				}
+				else
+				{
+					CreateUnit();
+				}
+				return;
+			}
 		}
+		previousCell = null;
 	}
 
 	void HandleInput()
 	{
-		Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-		RaycastHit hit;
-		if (Physics.Raycast(inputRay, out hit)) {
-			HexCell currentCell = hexGrid.GetCell(hit.point);
-			if (previousCell && previousCell != currentCell) {
+		HexCell currentCell = GetCellUnderCursor();
+		if (currentCell)
+		{
+			if (previousCell && previousCell != currentCell)
+			{
 				ValidateDrag(currentCell);
 			} else {
 				isDrag = false;
 			}
 
-			if (editMode)
-			{
-				EditCells(currentCell);
-			}
-			else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
-			{// imposta partenza pathfinding
-				if (searchFromCell != currentCell)
-				{//non cerca se è la stessa cella
-					if (searchFromCell)
-					{
-						searchFromCell.DisableHighlight();
-					}
-					searchFromCell = currentCell;
-					searchFromCell.EnableHighlight(Color.blue);
-					if (searchToCell)
-					{//serve per camiare gli estemi del pathfinding durante il calcolo
-						hexGrid.FindPath(searchFromCell, searchToCell, 24);
-					}
-				}
-			}
-			else if (searchFromCell && searchFromCell != currentCell)
-			{// imposta cella di fine pathfinding ed esecuzione
-				if (searchToCell != currentCell)
-				{
-					searchToCell = currentCell;
-					hexGrid.FindPath(searchFromCell, searchToCell, 24);
-				}
-			}
+			EditCells(currentCell);
 			previousCell = currentCell;
+
 		} else {
 			previousCell = null;
 		}
+	}
+
+	HexCell GetCellUnderCursor()
+	{
+		return hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
 	}
 
 	void ValidateDrag(HexCell currentCell)
@@ -164,11 +162,24 @@ public class HexMapEditor : MonoBehaviour
 		}
 	}
 
-
-	void Awake()
+	void CreateUnit()
 	{
-		terrainMaterial.DisableKeyword("GRID_ON");
+		HexCell cell = GetCellUnderCursor();
+		if (cell && !cell.Unit)
+		{
+			hexGrid.AddUnit(Instantiate(HexUnit.unitPrefab), cell, Random.Range(0f, 360f));
+		}
 	}
+
+	void DestroyUnit()
+	{
+		HexCell cell = GetCellUnderCursor();
+		if (cell && cell.Unit)
+		{
+			hexGrid.RemoveUnit(cell.Unit);
+		}
+	}
+
 
 	////////////////////////////////////////////
 	#region metodi UI (Set)
@@ -192,14 +203,6 @@ public class HexMapEditor : MonoBehaviour
 	{
 		brushSize = (int)size;
 	}
-
-	/*
-	 * rimosso perchè l'ui viene accesa\spenta con l'edit mode
-	public void ShowUI(bool visible)
-	{
-		hexGrid.ShowUI(visible);
-	}
-	*/
 
 	public void SetRiverMode(int mode)
 	{
@@ -281,10 +284,7 @@ public class HexMapEditor : MonoBehaviour
 
 	public void SetEditMode(bool toggle)
 	{
-		editMode = toggle;
-		hexGrid.ShowUI(!toggle);
-		//ShowGrid(toggle);
-
+		enabled = toggle;
 	}
 
 

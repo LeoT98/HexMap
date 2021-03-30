@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\HexFeatureManager.cs" />
     <Compile Include="Assets\Scripts\TextureArrayWizard.cs" />
+    <Compile Include="Assets\Scripts\Cose di supporto\HexCellPriorityQueue.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\ListPool.cs" />
     <Compile Include="Assets\Scripts\HexGrid.cs" />
     <Compile Include="Assets\Scripts\HexMetrics.cs" />
@@ -74,7 +75,8 @@
     <Compile Include="Assets\Scripts\Cose di supporto\HexEdgeType.cs" />
     <Compile Include="Assets\Scripts\HexGridChunk.cs" />
     <Compile Include="Assets\Scripts\HexCell.cs" />
-    <Compile Include="Assets\Scripts\Cose di supporto\HexCellPriorityQueue.cs" />
+    <Compile Include="Assets\Scripts\HexUnit.cs" />
+    <Compile Include="Assets\Scripts\HexGameUI.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Scripts\Shaders\Water.shader" />

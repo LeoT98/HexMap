@@ -26,9 +26,17 @@ public class HexGrid : MonoBehaviour
 	HexCellPriorityQueue searchFrontier;
 	int searchFrontierPhase;
 	HexCell currentPathFrom, currentPathTo;
+	public bool HasPath
+	{
+		get {
+			return currentPathExists;
+		}
+	}
 	bool currentPathExists;
 
-
+	//Unità
+	List<HexUnit> units = new List<HexUnit>();
+	public HexUnit unitPrefab;
 
 	/// //////////////////////////////////////////////////////////////
 
@@ -37,6 +45,7 @@ public class HexGrid : MonoBehaviour
 		if (!HexMetrics.noiseSource) {
 			HexMetrics.noiseSource = noiseSource;
 			HexMetrics.InitializeHashGrid(seed);
+			HexUnit.unitPrefab = unitPrefab;
 		}
 	}
 
@@ -44,6 +53,8 @@ public class HexGrid : MonoBehaviour
 	{
 		HexMetrics.noiseSource = noiseSource;
 		HexMetrics.InitializeHashGrid(seed);
+		HexUnit.unitPrefab = unitPrefab;
+
 		CreateMap(cellCountX, cellCountZ);
 	}
 
@@ -56,6 +67,7 @@ public class HexGrid : MonoBehaviour
 		}
 
 		ClearPath();
+		ClearUnits();
 		if (chunks != null) {
 			for (int i = 0; i < chunks.Length; i++) {
 				Destroy(chunks[i].gameObject);
@@ -185,6 +197,7 @@ public class HexGrid : MonoBehaviour
 		ShowPath(speed);
 	}
 
+	//fa il pathfinding
 	bool Search(HexCell fromCell, HexCell toCell, int speed)
 	{// se non ho abbastanza movimento per entrare in una cella non ci entro e spreco il movimento
 		searchFrontierPhase += 2; //imposta il valore per cui una cella eè già stata contollata
@@ -221,7 +234,7 @@ public class HexGrid : MonoBehaviour
 				{// se le condizioni sono verificate non considera questo vicino
 					continue;
 				}
-				if (neighbor.IsUnderwater)
+				if (neighbor.IsUnderwater || neighbor.Unit)
 				{//come sopra
 					continue;
 				}
@@ -299,7 +312,7 @@ public class HexGrid : MonoBehaviour
 	}
 
 	//cancella percorso dalla mappa
-	void ClearPath()
+	public void ClearPath()
 	{
 		if (currentPathExists)
 		{
@@ -321,6 +334,40 @@ public class HexGrid : MonoBehaviour
 		currentPathFrom = currentPathTo = null;
 	}
 
+	//cancella tutte le unità
+	void ClearUnits()
+	{
+		for (int i = 0; i < units.Count; i++)
+		{
+			units[i].Die();
+		}
+		units.Clear();
+	}
+
+	public void AddUnit(HexUnit unit, HexCell location, float orientation)
+	{
+		units.Add(unit);
+		unit.transform.SetParent(transform, false);
+		unit.Location = location;
+		unit.Orientation = orientation;
+	}
+
+	public void RemoveUnit(HexUnit unit)
+	{
+		units.Remove(unit);
+		unit.Die();
+	}
+
+	//spara raycast e ritorna la cella colpita
+	public HexCell GetCell(Ray ray)
+	{
+		RaycastHit hit;
+		if (Physics.Raycast(ray, out hit))
+		{
+			return GetCell(hit.point);
+		}
+		return null;
+	}
 
 
 	public void Save(BinaryWriter writer)
@@ -328,14 +375,22 @@ public class HexGrid : MonoBehaviour
 		writer.Write(cellCountX);
 		writer.Write(cellCountZ);
 
-		for (int i = 0; i < cells.Length; i++) {
+		for (int i = 0; i < cells.Length; i++) 
+		{// slava la mappa
 			cells[i].Save(writer);
+		}
+
+		writer.Write(units.Count);
+		for (int i = 0; i < units.Count; i++)
+		{// salva le unità
+			units[i].Save(writer);
 		}
 	}
 
 	public void Load(BinaryReader reader, int header)
 	{
 		ClearPath();
+		ClearUnits();
 
 		int x = 18, z = 18;
 		if (header >= 1) {// serve se uso mappe vechie (header=0) che non avevano la dimensione
@@ -349,11 +404,22 @@ public class HexGrid : MonoBehaviour
 			}
 		}
 
-		for (int i = 0; i < cells.Length; i++) {
+		for (int i = 0; i < cells.Length; i++) 
+		{// modifica i valori delle celle
 			cells[i].Load(reader);
 		}
-		for (int i = 0; i < chunks.Length; i++) {
+		for (int i = 0; i < chunks.Length; i++)
+		{// aggiorna le mesh
 			chunks[i].Refresh();
+		}
+
+		if (header >= 2)
+		{// le unità sono state aggiunte dalla versione 2
+			int unitCount = reader.ReadInt32();
+			for (int i = 0; i < unitCount; i++)
+			{// mette le unità
+				HexUnit.Load(reader, this);
+			}
 		}
 	}
 
