@@ -67,16 +67,17 @@
     <Compile Include="Assets\Scripts\Cose di supporto\HexFeatureCollection.cs" />
     <Compile Include="Assets\Scripts\Gestione mappe\SaveLoadItem.cs" />
     <Compile Include="Assets\Scripts\Gestione mappe\SaveLoadMenu.cs" />
+    <Compile Include="Assets\Scripts\HexGameUI.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexMapCamera.cs" />
     <Compile Include="Assets\Scripts\HexMapEditor.cs" />
     <Compile Include="Assets\Scripts\HexMesh.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexDirection.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexCoordinates.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexEdgeType.cs" />
+    <Compile Include="Assets\Scripts\HexUnit.cs" />
     <Compile Include="Assets\Scripts\HexGridChunk.cs" />
     <Compile Include="Assets\Scripts\HexCell.cs" />
-    <Compile Include="Assets\Scripts\HexUnit.cs" />
-    <Compile Include="Assets\Scripts\HexGameUI.cs" />
+    <Compile Include="Assets\Scripts\Cose di supporto\Bezier.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Scripts\Shaders\Water.shader" />

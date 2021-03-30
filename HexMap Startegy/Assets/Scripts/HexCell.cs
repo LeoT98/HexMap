@@ -397,7 +397,7 @@ public class HexCell : MonoBehaviour
         return neighbor && ( elevation >= neighbor.elevation || waterLevel == neighbor.elevation );
     }
 
-    //rimuove fiumi n0n validi
+    //rimuove fiumi non validi
     void ValidateRivers()
     {
         if (hasOutgoingRiver &&  !IsValidRiverDestination(GetNeighbor(outgoingRiver)) ) {
