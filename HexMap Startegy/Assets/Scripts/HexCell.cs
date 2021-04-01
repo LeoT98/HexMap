@@ -11,7 +11,8 @@ public class HexCell : MonoBehaviour
     [SerializeField]
     HexCell[] neighbors;
 
-    
+    public HexCellShaderData ShaderData { get; set; }
+    public int Index { get; set; } //indice nel vettore delle celle
 
     public int Elevation {
         get {
@@ -43,7 +44,7 @@ public class HexCell : MonoBehaviour
         set {
             if (terrainTypeIndex != value) {
                 terrainTypeIndex = value;
-                Refresh();
+                ShaderData.RefreshTerrain(this);
             }
         }
     }
@@ -258,6 +259,18 @@ public class HexCell : MonoBehaviour
     //Unità
     public HexUnit Unit { get; set; }
 
+    //fog of war
+    public bool IsVisible
+    {
+        get {
+            return visibility > 0;
+        }
+    }
+	int visibility;
+
+
+
+
 
     /////////////////////////////////////////////////////////////
 
@@ -464,6 +477,23 @@ public class HexCell : MonoBehaviour
         highlight.enabled = true;
     }
 
+    public void IncreaseVisibility()
+    {
+        visibility += 1;
+        if (visibility == 1)
+        {
+            ShaderData.RefreshVisibility(this);
+        }
+    }
+
+    public void DecreaseVisibility()
+    {
+        visibility -= 1;
+        if (visibility == 0)
+        {
+            ShaderData.RefreshVisibility(this);
+        }
+    }
 
     public void Save(BinaryWriter writer)// load e save devono avere le cose che coincidono come ordine e tipo
     {
@@ -505,9 +535,10 @@ public class HexCell : MonoBehaviour
         writer.Write((byte)roadFlags);
     }
 
-    public void Load(BinaryReader reader)// load e save devono avere le cose che coincidono come ordine etipo
+    public void Load(BinaryReader reader)// load e save devono avere le cose che coincidono come ordine e tipo
     {// . ReadInt32 per gli int
         terrainTypeIndex = reader.ReadByte();
+        ShaderData.RefreshTerrain(this);
         elevation = reader.ReadByte();
         RefreshPosition();  //sistema l'elevazione
         waterLevel = reader.ReadByte();
@@ -545,5 +576,7 @@ public class HexCell : MonoBehaviour
             roads[i] = (roadFlags & (1 << i)) != 0; // & singola fa l'AND su 1 bit
         }
     }
+
+
 
 }

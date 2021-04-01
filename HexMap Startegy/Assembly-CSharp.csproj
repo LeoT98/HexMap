@@ -56,7 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\HexFeatureManager.cs" />
-    <Compile Include="Assets\Scripts\TextureArrayWizard.cs" />
+    <Compile Include="Assets\Scripts\Cose di supporto\TextureArrayWizard.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexCellPriorityQueue.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\ListPool.cs" />
     <Compile Include="Assets\Scripts\HexGrid.cs" />
@@ -75,15 +75,18 @@
     <Compile Include="Assets\Scripts\Cose di supporto\HexCoordinates.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexEdgeType.cs" />
     <Compile Include="Assets\Scripts\HexUnit.cs" />
+    <Compile Include="Assets\Scripts\Cose di supporto\Bezier.cs" />
     <Compile Include="Assets\Scripts\HexGridChunk.cs" />
     <Compile Include="Assets\Scripts\HexCell.cs" />
-    <Compile Include="Assets\Scripts\Cose di supporto\Bezier.cs" />
+    <Compile Include="Assets\Scripts\HexCellShaderData.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Scripts\Shaders\Water.shader" />
      <None Include="Assets\Scripts\Shaders\Highlight.shader" />
      <None Include="Assets\Scripts\Shaders\Terrain.shader" />
+     <None Include="Assets\Scripts\Shaders\Feature.shader" />
      <None Include="Assets\Scripts\Shaders\Estuary.shader" />
+     <None Include="Assets\Scripts\Shaders\HexCellData.cginc" />
      <None Include="Assets\Scripts\Shaders\WaterShore.shader" />
      <None Include="Assets\Scripts\Shaders\Water.cginc" />
      <None Include="Assets\Scripts\Shaders\River.shader" />
