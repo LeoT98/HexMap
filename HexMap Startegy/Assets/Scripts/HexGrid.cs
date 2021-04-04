@@ -191,22 +191,20 @@ public class HexGrid : MonoBehaviour
 	}
 
 
-	public void FindPath(HexCell fromCell, HexCell toCell, int speed)
+	public void FindPath(HexCell fromCell, HexCell toCell, HexUnit unit)
 	{
 		ClearPath();
-
 		currentPathFrom = fromCell;
 		currentPathTo = toCell;
-		currentPathExists = Search(fromCell, toCell, speed);
-
-		ShowPath(speed);
+		currentPathExists = Search(fromCell, toCell, unit);
+		ShowPath(unit.Speed);
 	}
 
 	//fa il pathfinding
-	bool Search(HexCell fromCell, HexCell toCell, int speed)
+	bool Search(HexCell fromCell, HexCell toCell, HexUnit unit)
 	{// se non ho abbastanza movimento per entrare in una cella non ci entro e spreco il movimento
 		searchFrontierPhase += 2; //imposta il valore per cui una cella eè già stata contollata
-
+		int speed = unit.Speed;
 		if (searchFrontier == null)
 		{// posso inizializzarlo nello start ed evitare l'if
 			searchFrontier = new HexCellPriorityQueue();
@@ -239,30 +237,15 @@ public class HexGrid : MonoBehaviour
 				{// se le condizioni sono verificate non considera questo vicino
 					continue;
 				}
-				if (neighbor.IsUnderwater || neighbor.Unit)
-				{//come sopra
-					continue;
-				}
 
-				HexEdgeType edgeType = current.GetEdgeType(neighbor);
-				if (edgeType == HexEdgeType.Cliff)
+				if (!unit.IsValidDestination(neighbor))
 				{
 					continue;
 				}
-
-				int moveCost;
-				if (current.HasRoadThroughEdge(d))
+				int moveCost = unit.GetMoveCost(current, neighbor, d);
+				if (moveCost < 0)
 				{
-					moveCost = 1;
-				}
-				else if (current.Walled != neighbor.Walled)
-				{//non attraverso i muri se manca la strada
 					continue;
-				}
-				else
-				{
-					moveCost = (edgeType == HexEdgeType.Flat) ? 5 : 10;
-					moveCost += neighbor.UrbanLevel + neighbor.FarmLevel + neighbor.PlantLevel;
 				}
 
 				int distance = current.Distance + moveCost;
@@ -279,7 +262,7 @@ public class HexGrid : MonoBehaviour
 					neighbor.PathFrom = current;
 
 					//Come euristica metto distanza minima perchè ipotizzo strada (costo 1).
-					//Se lo aumento contolla meno starade e potrei perdere percorsi ottimi che però fanno un giro largo
+					//Se lo aumento controlla meno starade e potrei perdere percorsi ottimi che però fanno un giro largo
 					neighbor.SearchHeuristic = neighbor.coordinates.DistanceTo(toCell.coordinates);
 
 					searchFrontier.Enqueue(neighbor);
@@ -407,14 +390,11 @@ public class HexGrid : MonoBehaviour
 			for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
 			{
 				HexCell neighbor = current.GetNeighbor(d);
-				if (
-					neighbor == null ||
-					neighbor.SearchPhase > searchFrontierPhase
-				)
+				if (neighbor == null || neighbor.SearchPhase > searchFrontierPhase)
 				{
 					continue;
 				}
-				int distance = current.Distance + 1;
+				int distance = current.Distance + 1; //distanza del vicino che sto controllando
 				if (distance > range)
 				{
 					continue;
@@ -424,7 +404,7 @@ public class HexGrid : MonoBehaviour
 				{
 					neighbor.SearchPhase = searchFrontierPhase;
 					neighbor.Distance = distance;
-					neighbor.SearchHeuristic = 0;
+					neighbor.SearchHeuristic = 0;  //viene usato da searchFrontier per stabilire la priorità
 					searchFrontier.Enqueue(neighbor);
 				}
 				else if (distance < neighbor.Distance)
@@ -461,7 +441,7 @@ public class HexGrid : MonoBehaviour
 
 	//spara raycast e ritorna la cella colpita
 	public HexCell GetCell(Ray ray)
-	{
+	{// passargli:    Camera.main.ScreenPointToRay(Input.mousePosition)    per selezionare col mouse
 		RaycastHit hit;
 		if (Physics.Raycast(ray, out hit))
 		{
@@ -507,7 +487,7 @@ public class HexGrid : MonoBehaviour
 
 		for (int i = 0; i < cells.Length; i++) 
 		{// modifica i valori delle celle
-			cells[i].Load(reader);
+			cells[i].Load(reader, header);
 		}
 		for (int i = 0; i < chunks.Length; i++)
 		{// aggiorna le mesh

@@ -12,7 +12,7 @@ public class HexCell : MonoBehaviour
     HexCell[] neighbors;
 
     public HexCellShaderData ShaderData { get; set; }
-    public int Index { get; set; } //indice nel vettore delle celle
+    public int Index { get; set; } //indice nel vettore delle celle serve per la texture e la fow
 
     public int Elevation {
         get {
@@ -266,8 +266,8 @@ public class HexCell : MonoBehaviour
             return visibility > 0;
         }
     }
-	int visibility;
-
+	int visibility; //la visibilità per lo shader sta sul rosso (red del Rgb)
+    public bool IsExplored { get; private set; } //una volta esplorata rimane visibile ma può esserci fow. Sta sul verde del rGb
 
 
 
@@ -481,7 +481,8 @@ public class HexCell : MonoBehaviour
     {
         visibility += 1;
         if (visibility == 1)
-        {
+        {// se è più di 1 ste robe sono già state fatte
+            IsExplored = true;
             ShaderData.RefreshVisibility(this);
         }
     }
@@ -533,9 +534,10 @@ public class HexCell : MonoBehaviour
             }
         }
         writer.Write((byte)roadFlags);
+        writer.Write(IsExplored);
     }
 
-    public void Load(BinaryReader reader)// load e save devono avere le cose che coincidono come ordine e tipo
+    public void Load(BinaryReader reader, int header)// load e save devono avere le cose che coincidono come ordine e tipo
     {// . ReadInt32 per gli int
         terrainTypeIndex = reader.ReadByte();
         ShaderData.RefreshTerrain(this);
@@ -575,6 +577,9 @@ public class HexCell : MonoBehaviour
         {
             roads[i] = (roadFlags & (1 << i)) != 0; // & singola fa l'AND su 1 bit
         }
+
+        IsExplored = header >= 3 ? reader.ReadBoolean() : false;
+        ShaderData.RefreshVisibility(this); //aggiorna all'esplorazioen attuale
     }
 
 

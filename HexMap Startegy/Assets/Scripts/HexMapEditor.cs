@@ -32,7 +32,7 @@ public class HexMapEditor : MonoBehaviour
 		SetEditMode(false); //inizia con editor disattivato
 	}
 
-	void Update()
+    void Update()
 	{
 		if (!EventSystem.current.IsPointerOverGameObject()) //l'EventSystem vede solo l'ui quindi blocca i click sui canvas
 		{
