@@ -29,7 +29,8 @@ public class HexMapEditor : MonoBehaviour
 	void Awake()
 	{
 		terrainMaterial.DisableKeyword("GRID_ON");
-		SetEditMode(false); //inizia con editor disattivato
+		Shader.EnableKeyword("HEX_MAP_EDIT_MODE");
+		SetEditMode(true); //inizia con editor attivato
 	}
 
     void Update()

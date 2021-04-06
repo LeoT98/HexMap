@@ -10,10 +10,6 @@ public class HexGameUI : MonoBehaviour
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
-    private void Start()
-    {//all'avvio non sono in edit mode
-		Shader.DisableKeyword("HEX_MAP_EDIT_MODE");
-	}
 
     void Update()
 	{

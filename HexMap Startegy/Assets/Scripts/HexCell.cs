@@ -21,7 +21,12 @@ public class HexCell : MonoBehaviour
         set {
             if (elevation == value)    return;
 
+            int originalViewElevation = ViewElevation;
             elevation = value;
+            if (ViewElevation != originalViewElevation)
+            {
+                ShaderData.ViewElevationChanged();
+            }
             RefreshPosition();
             ValidateRivers();  //previene fiumi che vanno in salita
 
@@ -56,6 +61,7 @@ public class HexCell : MonoBehaviour
         }
     }
 
+  /////////////////////////////////////////////////////
     #region FIUMI & ACQUA
     public bool HasIncomingRiver {
         get {
@@ -121,7 +127,12 @@ public class HexCell : MonoBehaviour
             if (waterLevel == value) {
                 return;
             }
+            int originalViewElevation = ViewElevation;
             waterLevel = value;
+            if (ViewElevation != originalViewElevation)
+            {
+                ShaderData.ViewElevationChanged();
+            }
             ValidateRivers();
             Refresh();
         }
@@ -259,17 +270,31 @@ public class HexCell : MonoBehaviour
     //Unità
     public HexUnit Unit { get; set; }
 
-    //fog of war
+    //fog of war, esplorazioen e visibilità
     public bool IsVisible
     {
         get {
-            return visibility > 0;
+            return visibility > 0 && Explorable;
         }
     }
 	int visibility; //la visibilità per lo shader sta sul rosso (red del Rgb)
-    public bool IsExplored { get; private set; } //una volta esplorata rimane visibile ma può esserci fow. Sta sul verde del rGb
-
-
+    public bool IsExplored //una volta esplorata rimane visibile ma può esserci fow. Sta sul verde del rGb
+    {
+        get {
+            return explored && Explorable;
+        }
+        private set {
+            explored = value;
+        }
+    }
+	bool explored; 
+    public int ViewElevation //indica quanto fa vedere la cella e quanto impedisce di vedere
+    {
+        get {
+            return elevation >= waterLevel ? elevation : waterLevel;
+        }
+    }
+    public bool Explorable { get; set; }
 
 
     /////////////////////////////////////////////////////////////
@@ -496,10 +521,21 @@ public class HexCell : MonoBehaviour
         }
     }
 
+    public void ResetVisibility()
+    {
+        if (visibility > 0)
+        {
+            visibility = 0;
+            ShaderData.RefreshVisibility(this);
+        }
+    }
+
+
+
     public void Save(BinaryWriter writer)// load e save devono avere le cose che coincidono come ordine e tipo
     {
         writer.Write((byte)terrainTypeIndex);
-        writer.Write((byte)elevation);
+        writer.Write((byte)(elevation + 127)); //aggiungo per gestire l'elevazione negativa (si fa dalla versione 4)
         writer.Write((byte)waterLevel);
         writer.Write((byte)urbanLevel);
         writer.Write((byte)farmLevel);
@@ -542,6 +578,10 @@ public class HexCell : MonoBehaviour
         terrainTypeIndex = reader.ReadByte();
         ShaderData.RefreshTerrain(this);
         elevation = reader.ReadByte();
+        if (header >= 4)
+        {
+            elevation -= 127;
+        }
         RefreshPosition();  //sistema l'elevazione
         waterLevel = reader.ReadByte();
         urbanLevel = reader.ReadByte();
