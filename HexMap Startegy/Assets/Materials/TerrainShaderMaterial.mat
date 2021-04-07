@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: TerrainShaderMaterial
   m_Shader: {fileID: 4800000, guid: 74d2f99eced876745946ec6b5c79642c, type: 3}
-  m_ShaderKeywords: GRID_ON _GLOSSYREFLECTIONS_OFF
+  m_ShaderKeywords: _GLOSSYREFLECTIONS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -24,7 +24,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 18700000, guid: 21b740438306e91438ffc92ceff0f589, type: 2}
+        m_Texture: {fileID: 18700000, guid: 6344f5d79e382714c86e62e25d5e5cc4, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
