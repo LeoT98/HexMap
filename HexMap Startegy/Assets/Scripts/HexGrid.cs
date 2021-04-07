@@ -393,7 +393,7 @@ public class HexGrid : MonoBehaviour
 	List<HexCell> GetVisibleCells(HexCell fromCell, int range)
 	{
 		List<HexCell> visibleCells = ListPool<HexCell>.Get();
-
+		int altezzaIniziale = fromCell.Elevation;
 		searchFrontierPhase += 2;
 		if (searchFrontier == null)
 		{
@@ -407,7 +407,23 @@ public class HexGrid : MonoBehaviour
 		range += fromCell.ViewElevation;
 		fromCell.SearchPhase = searchFrontierPhase;
 		fromCell.Distance = 0;
-		searchFrontier.Enqueue(fromCell);
+		visibleCells.Add(fromCell);
+
+		for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+        {
+			HexCell neighbor = fromCell.GetNeighbor(d);
+			if (altezzaIniziale < neighbor.ViewElevation)
+			{
+				neighbor.SearchPhase = searchFrontierPhase + 1;
+				visibleCells.Add(neighbor);
+			}
+            else
+            {
+				neighbor.SearchPhase = searchFrontierPhase;
+				neighbor.Distance = 1;
+				searchFrontier.Enqueue(neighbor);
+			}
+		}
 
 		HexCoordinates fromCoordinates = fromCell.coordinates;
 		while (searchFrontier.Count > 0)
@@ -426,6 +442,11 @@ public class HexGrid : MonoBehaviour
 				int distance = current.Distance + 1; //distanza del vicino che sto controllando
 				if (distance + neighbor.ViewElevation > range || 
 					distance > fromCoordinates.DistanceTo(neighbor.coordinates) || !neighbor.Explorable)
+				{
+					continue;
+				}
+
+				if (altezzaIniziale < neighbor.ViewElevation)
 				{
 					continue;
 				}

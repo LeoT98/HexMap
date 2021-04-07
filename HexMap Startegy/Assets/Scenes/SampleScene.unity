@@ -2364,7 +2364,7 @@ GameObject:
   - component: {fileID: 349301433}
   - component: {fileID: 349301432}
   m_Layer: 5
-  m_Name: Color Panel
+  m_Name: Terrain Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13654,6 +13654,17 @@ MonoBehaviour:
   elevationMaximum: 8
   mapBorderX: 4
   mapBorderZ: 4
+  regionBorder: 4
+  regionCount: 1
+  erosionPercentage: 50
+  climateSimulation: 50
+  evaporationFactor: 0.5
+  precipitationFactor: 0.25
+  runoffFactor: 0.25
+  seepageFactor: 0.125
+  startingMoisture: 0.1
+  windDirection: 5
+  windStrength: 3
 --- !u!4 &1795050716
 Transform:
   m_ObjectHideFlags: 0

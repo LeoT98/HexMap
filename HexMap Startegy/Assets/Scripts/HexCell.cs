@@ -288,7 +288,7 @@ public class HexCell : MonoBehaviour
         }
     }
 	bool explored; 
-    public int ViewElevation //indica quanto fa vedere la cella e quanto impedisce di vedere
+    public int ViewElevation //indica quanto fa vedere la cella e quanto impedisce di vedere. Usato anche per la generazione del clima
     {
         get {
             return elevation >= waterLevel ? elevation : waterLevel;
