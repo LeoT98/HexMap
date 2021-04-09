@@ -24,16 +24,16 @@
         #include "HexCellData.cginc"
         sampler2D _MainTex, _GridCoordinates;
 
+        half _Glossiness;
+        fixed3 _Specular;
+        fixed4 _Color;
+        half3 _BackgroundColor;
+
         struct Input
         {
             float2 uv_MainTex;
             float2 visibility;
         };
-
-        half _Glossiness;
-        fixed3 _Specular;
-        fixed4 _Color;
-        half3 _BackgroundColor;
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
         // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -51,6 +51,7 @@
             gridUV.x *= 1 / (4 * 8.66025404);
             gridUV.y *= 1 / (2 * 15.0);
             float2 cellDataCoordinates = floor(gridUV.xy) + tex2Dlod(_GridCoordinates, gridUV).rg;
+			cellDataCoordinates *= 2;
 
             float4 cellData = GetCellData(cellDataCoordinates);
             data.visibility.x = cellData.x;
