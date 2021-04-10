@@ -13665,6 +13665,12 @@ MonoBehaviour:
   startingMoisture: 0.1
   windDirection: 5
   windStrength: 3
+  riverPercentage: 10
+  extraLakeProbability: 0.25
+  lowTemperature: 0
+  highTemperature: 1
+  hemisphere: 0
+  temperatureJitter: 0.1
 --- !u!4 &1795050716
 Transform:
   m_ObjectHideFlags: 0
@@ -15679,6 +15685,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4703429079271582577, guid: 8efdb6a3687c5f34ab4270cbe3b0ea09, type: 3}
+      propertyPath: unitPrefab
+      value: 
+      objectReference: {fileID: 2371947805623802721, guid: 9a96ab80386448046a9b9e507b2b3dc5, type: 3}
     - target: {fileID: 4703429079271582578, guid: 8efdb6a3687c5f34ab4270cbe3b0ea09, type: 3}
       propertyPath: m_Name
       value: Hex Grid
