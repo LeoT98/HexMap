@@ -104,7 +104,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8431437758200228874}
-  - component: {fileID: 2371947805623802721}
+  - component: {fileID: -6517481562580121976}
   m_Layer: 0
   m_Name: Unit Sfera
   m_TagString: Untagged
@@ -127,7 +127,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2371947805623802721
+--- !u!114 &-6517481562580121976
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -136,6 +136,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2955564567315304164}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 640d3fce90139f44e8b659bd932292eb, type: 3}
+  m_Script: {fileID: 11500000, guid: f83e3df274ec6e349933493c0c692913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unitPrefab: {fileID: -6517481562580121976}

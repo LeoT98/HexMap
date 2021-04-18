@@ -38,17 +38,17 @@ public class HexGrid : MonoBehaviour
 	bool currentPathExists;
 
 	//Unità
-	List<HexUnit> units = new List<HexUnit>();
-	public HexUnit unitPrefab;
+	List<HexUnit> units = new List<HexUnit>(); //tutte le unità
+	public List<HexUnit> unitPrefabs= new List<HexUnit>();
 
 	/// //////////////////////////////////////////////////////////////
 
- 	void OnEnable()
+	void OnEnable()
 	{
 		if (!HexMetrics.noiseSource) {
 			HexMetrics.noiseSource = noiseSource;
 			HexMetrics.InitializeHashGrid(seed);
-			HexUnit.unitPrefab = unitPrefab;
+			AssegnaUnità();
 			ResetVisibility();
 		}
 	}
@@ -57,7 +57,7 @@ public class HexGrid : MonoBehaviour
 	{
 		HexMetrics.noiseSource = noiseSource;
 		HexMetrics.InitializeHashGrid(seed);
-		HexUnit.unitPrefab = unitPrefab;
+		AssegnaUnità();
 		cellShaderData = gameObject.AddComponent<HexCellShaderData>();
 		cellShaderData.Grid = this;
 		CreateMap(cellCountX, cellCountZ);
@@ -383,6 +383,16 @@ public class HexGrid : MonoBehaviour
 		unit.Orientation = orientation;
 	}
 
+	public void AddUnit(int i, HexCell location, float orientation)
+	{
+		HexUnit unit =Instantiate(unitPrefabs[i]);
+		units.Add(unit);
+		unit.Grid = this;
+		unit.transform.SetParent(transform, false);
+		unit.Location = location;
+		unit.Orientation = orientation;
+	}
+
 	public void RemoveUnit(HexUnit unit)
 	{
 		units.Remove(unit);
@@ -390,7 +400,7 @@ public class HexGrid : MonoBehaviour
 	}
 
 	//fa tipo pathfinding ma per la visibilità
-	List<HexCell> GetVisibleCells(HexCell fromCell, int range)
+	List<HexCell> GetVisibleCells(HexCell fromCell, HexUnit unit)
 	{
 		List<HexCell> visibleCells = ListPool<HexCell>.Get();
 		int altezzaIniziale = fromCell.Elevation;
@@ -404,13 +414,14 @@ public class HexGrid : MonoBehaviour
 			searchFrontier.Clear();
 		}
 
+		int range = unit.VisionRange;
 		range += fromCell.ViewElevation;
 		fromCell.SearchPhase = searchFrontierPhase;
 		fromCell.Distance = 0;
 		visibleCells.Add(fromCell);
 
 		for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
-        {
+        {// gestisce le celle confinanti
 			HexCell neighbor = fromCell.GetNeighbor(d);
 			if (altezzaIniziale < neighbor.ViewElevation)
 			{
@@ -439,14 +450,16 @@ public class HexGrid : MonoBehaviour
 				{
 					continue;
 				}
-				int distance = current.Distance + 1; //distanza del vicino che sto controllando
+
+				int visionCost = unit.GetVisionCost(fromCell ,current, neighbor, d);
+				if (visionCost < 0)
+                {
+					continue;
+                }
+				int distance = current.Distance + visionCost; //distanza del vicino che sto controllando
+				
 				if (distance + neighbor.ViewElevation > range || 
 					distance > fromCoordinates.DistanceTo(neighbor.coordinates) || !neighbor.Explorable)
-				{
-					continue;
-				}
-
-				if (altezzaIniziale < neighbor.ViewElevation)
 				{
 					continue;
 				}
@@ -469,9 +482,9 @@ public class HexGrid : MonoBehaviour
 		return visibleCells;
 	}
 
-	public void IncreaseVisibility(HexCell fromCell, int range)
+	public void IncreaseVisibility(HexCell fromCell, HexUnit unit)
 	{
-		List<HexCell> cells = GetVisibleCells(fromCell, range);
+		List<HexCell> cells = GetVisibleCells(fromCell, unit);
 		for (int i = 0; i < cells.Count; i++)
 		{
 			cells[i].IncreaseVisibility();
@@ -479,9 +492,9 @@ public class HexGrid : MonoBehaviour
 		ListPool<HexCell>.Add(cells);
 	}
 
-	public void DecreaseVisibility(HexCell fromCell, int range)
+	public void DecreaseVisibility(HexCell fromCell, HexUnit unit)
 	{
-		List<HexCell> cells = GetVisibleCells(fromCell, range);
+		List<HexCell> cells = GetVisibleCells(fromCell, unit);
 		for (int i = 0; i < cells.Count; i++)
 		{
 			cells[i].DecreaseVisibility();
@@ -498,11 +511,16 @@ public class HexGrid : MonoBehaviour
 		for (int i = 0; i < units.Count; i++)
 		{
 			HexUnit unit = units[i];
-			IncreaseVisibility(unit.Location, unit.VisionRange);
+			IncreaseVisibility(unit.Location, unit);
 		}
 	}
 
 
+	void AssegnaUnità()
+    {
+		CV33.unitPrefab = unitPrefabs[0];
+		CapsulaBlu.unitPrefab = unitPrefabs[1];
+	}
 
 
 

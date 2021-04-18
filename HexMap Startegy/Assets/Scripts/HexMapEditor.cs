@@ -7,7 +7,7 @@ public class HexMapEditor : MonoBehaviour
 	public HexGrid hexGrid;
 
 	int activeElevation, activeWaterLevel, activeUrbanLevel, activeFarmLevel, activePlantLevel, activeSpecialIndex;
-	int activeTerrainTypeIndex;
+	int activeTerrainTypeIndex, activeUnitIndex;
 	bool applyElevation = true, applyWaterLevel = true;
 	bool applyUrbanLevel, applyFarmLevel, applyPlantLevel, applySpecialIndex;
 	int brushSize;
@@ -168,7 +168,8 @@ public class HexMapEditor : MonoBehaviour
 		HexCell cell = GetCellUnderCursor();
 		if (cell && !cell.Unit)
 		{
-			hexGrid.AddUnit(Instantiate(HexUnit.unitPrefab), cell, Random.Range(0f, 360f));
+			HexUnit u = hexGrid.unitPrefabs[activeUnitIndex];
+			hexGrid.AddUnit(Instantiate(u), cell, Random.Range(0f, 360f));
 		}
 	}
 
@@ -288,7 +289,10 @@ public class HexMapEditor : MonoBehaviour
 		enabled = toggle;
 	}
 
-
+	public void SetUnitIndex(int index)
+	{
+		activeUnitIndex = index;
+	}
 
 	#endregion
 

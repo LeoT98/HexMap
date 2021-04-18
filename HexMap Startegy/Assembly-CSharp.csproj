@@ -84,6 +84,7 @@
     <Compile Include="Assets\Scripts\Gestione mappe\NewMapMenu.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\UI\ListBuildableItems.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexFeatureCollection.cs" />
+    <Compile Include="Assets\Scripts\HexMapGenerator.cs" />
     <Compile Include="Assets\Scripts\Gestione mappe\SaveLoadItem.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\UI\UnitSelectionPanel.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\Hex.cs" />
@@ -117,12 +118,13 @@
     <Compile Include="Assets\Scripts\Cose di supporto\HexCoordinates.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexEdgeType.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\UnitView.cs" />
-    <Compile Include="Assets\Scripts\HexUnit.cs" />
+    <Compile Include="Assets\Scripts\Unità\HexUnit.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\CityNameplate.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\Bezier.cs" />
     <Compile Include="Assets\Scripts\HexCell.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\Unit.cs" />
-    <Compile Include="Assets\Scripts\Gestione mappe\HexMapGenerator.cs" />
+    <Compile Include="Assets\Scripts\Unità\CV33.cs" />
+    <Compile Include="Assets\Scripts\Unità\CapsulaBlu.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Scripts\Shaders\Water.shader" />
