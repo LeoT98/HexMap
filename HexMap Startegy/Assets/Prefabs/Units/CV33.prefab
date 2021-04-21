@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8431437758200228874}
   - component: {fileID: -1644720483143319534}
   m_Layer: 0
-  m_Name: Unit
+  m_Name: CV33
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e59e65bbffebf44c99d9d9e44a20876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitPrefab: {fileID: -1644720483143319534}
+  VisionRange: 10
 --- !u!1 &4260425936033506760
 GameObject:
   m_ObjectHideFlags: 0

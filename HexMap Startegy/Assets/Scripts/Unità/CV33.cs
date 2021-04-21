@@ -5,8 +5,6 @@ public class CV33 : HexUnit
     new public static HexUnit unitPrefab; //instanziato nell'Awake di HexGrid e in OnEnable
     new public static int prefabIndex = 0;
 
-    public override int VisionRange { get => 5; }
-
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 

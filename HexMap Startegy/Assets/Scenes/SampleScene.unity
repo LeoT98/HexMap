@@ -15339,7 +15339,7 @@ MonoBehaviour:
   startingMoisture: 0.1
   windDirection: 5
   windStrength: 3
-  riverPercentage: 10
+  riverPercentage: 15
   extraLakeProbability: 0.25
   lowTemperature: 0
   highTemperature: 1

@@ -67,6 +67,7 @@
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\Priority Queue\StablePriorityQueue.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\TextureArrayWizard.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\Priority Queue\GenericPriorityQueueNode.cs" />
+    <Compile Include="Assets\Scripts\Unità\CapsulaBlu.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexCellPriorityQueue.cs" />
     <Compile Include="Assets\Scripts\HexGridChunk.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\Priority Queue\GenericPriorityQueue.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\CameraKeyboardController.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexMapCamera.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\Priority Queue\SimplePriorityQueue.cs" />
+    <Compile Include="Assets\Scripts\Unità\CV33.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\Priority Queue\IFixedSizePriorityQueue.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\CityNameplateController.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\BuildingJob.cs" />
@@ -123,8 +125,6 @@
     <Compile Include="Assets\Scripts\Cose di supporto\Bezier.cs" />
     <Compile Include="Assets\Scripts\HexCell.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\Unit.cs" />
-    <Compile Include="Assets\Scripts\Unità\CV33.cs" />
-    <Compile Include="Assets\Scripts\Unità\CapsulaBlu.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Scripts\Shaders\Water.shader" />

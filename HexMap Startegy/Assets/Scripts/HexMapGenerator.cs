@@ -673,12 +673,9 @@ public class HexMapGenerator : MonoBehaviour
 			{
 				riverOrigins.Add(cell);
 				riverOrigins.Add(cell);
-				riverOrigins.Add(cell);
-				riverOrigins.Add(cell);
 			}
 			if (weight > 0.5f)
 			{
-				riverOrigins.Add(cell);
 				riverOrigins.Add(cell);
 			}
 			if (weight > 0.25f)
@@ -698,7 +695,7 @@ public class HexMapGenerator : MonoBehaviour
 
 			if (!origin.HasRiver)
 			{//evito che i fiumi siano tutti vicini o attaccato all'acqua
-				riverBudget -= CreateRiver(origin); bool isValidOrigin = true;
+				bool isValidOrigin = true;
 				for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
 				{
 					HexCell neighbor = origin.GetNeighbor(d);
@@ -725,12 +722,12 @@ public class HexMapGenerator : MonoBehaviour
 
 	int CreateRiver(HexCell origin)
 	{
-		int minNeighborElevation = int.MaxValue;
 		int length = 1;
 		HexCell cell = origin;
 		HexDirection direction = HexDirection.NE;
 		while (!cell.IsUnderwater)
 		{
+			int minNeighborElevation = int.MaxValue;
 			flowDirections.Clear();
 			for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
 			{

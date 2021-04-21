@@ -49,11 +49,8 @@ public class HexUnit : MonoBehaviour //per flexare potrei farla astratta
 	const float rotationSpeed = 180f; //per l'animazione
 
 	public HexGrid Grid { get; set; }
-	public virtual int VisionRange 
-	{
-		get { return 3; }
-        set { }
-	}
+	public int VisionRange;
+	
 
 	public int Speed // caselle che si muove
 	{
