@@ -29,7 +29,7 @@ public class CV33 : HexUnit
 		}
 		else
 		{
-			moveCost = edgeType == HexEdgeType.Flat ? 2 : 4;
+			moveCost = edgeType == HexEdgeType.Flat ? 5 : 8;
 			moveCost += toCell.UrbanLevel + toCell.FarmLevel + toCell.PlantLevel;
 		}
 		return moveCost;

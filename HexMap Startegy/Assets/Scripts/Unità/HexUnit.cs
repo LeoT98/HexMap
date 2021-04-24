@@ -5,7 +5,7 @@ using System.Collections;
 
 
 
-public class HexUnit : MonoBehaviour //per flexare potrei farla astratta
+public class HexUnit : MonoBehaviour, HexTurnable //per flexare potrei farla astratta
 {
 	public static int prefabIndex= 42;
 
@@ -41,17 +41,17 @@ public class HexUnit : MonoBehaviour //per flexare potrei farla astratta
 		}
 	}
 	protected float orientation;
-
 	public static HexUnit unitPrefab; //instanziato nell'Awake di HexGrid e in OnEnable. Serve solo nei figli
+	public HexGrid Grid { get; set; }
+
+	public Queue<List<HexCell>> pathsQueue=new Queue<List<HexCell>>();
 
 	List<HexCell> pathToTravel;
 	const float travelSpeed = 3f; //per l'animazione
 	const float rotationSpeed = 180f; //per l'animazione
 
-	public HexGrid Grid { get; set; }
-
-	public int VisionRange;
-	public int Speed; // caselle che si muove
+	public int visionRange;
+	public int speed; // caselle che si muove
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
@@ -69,8 +69,18 @@ public class HexUnit : MonoBehaviour //per flexare potrei farla astratta
 			}
 		}
 
-	}	
+	}
 
+	public void DoTurn()
+	{
+
+	}
+
+	public void MoveOneTurn()
+    {
+		if (pathsQueue.Count == 0) return;
+		Travel(pathsQueue.Dequeue());
+    }
 
 	public void Travel(List<HexCell> path)
 	{
@@ -210,6 +220,31 @@ public class HexUnit : MonoBehaviour //per flexare potrei farla astratta
 
 		return visionCost;
     }
+
+	public void CreatePathsStack(List<HexCell> path)
+	{
+		pathsQueue.Clear();
+		HexCell current;
+		int previousTurn = 0;
+		List<HexCell> cells = new List<HexCell>();
+		for (int c = 0; c < path.Count; c++)
+		{
+			current = path[c];
+			int turn = (current.Distance - 1) / speed;
+            if (turn <= previousTurn)
+            {
+				cells.Add(current);
+            }
+            else
+            {
+				previousTurn = turn;
+				pathsQueue.Enqueue(cells);
+				cells = new List<HexCell>();
+				cells.Add(current);
+            }
+		}
+		pathsQueue.Enqueue(cells);
+	}
 
 	public virtual void Save(BinaryWriter writer)
 	{

@@ -139,5 +139,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f83e3df274ec6e349933493c0c692913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  VisionRange: 8
-  Speed: 20
+  visionRange: 3
+  speed: 20

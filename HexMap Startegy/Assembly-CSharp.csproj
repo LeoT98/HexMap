@@ -55,7 +55,7 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\HexFeatureManager.cs" />
+    <Compile Include="Assets\Scripts\Gestione mappe\HexFeatureManager.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\CameraMotion.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\IQPathWorld.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\SelectionController.cs" />
@@ -69,7 +69,7 @@
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\Priority Queue\GenericPriorityQueueNode.cs" />
     <Compile Include="Assets\Scripts\Unità\CapsulaBlu.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexCellPriorityQueue.cs" />
-    <Compile Include="Assets\Scripts\HexGridChunk.cs" />
+    <Compile Include="Assets\Scripts\Gestione mappe\HexGridChunk.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\Priority Queue\GenericPriorityQueue.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\Database\BuildingDatabase.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\IQPathTile.cs" />
@@ -77,7 +77,7 @@
     <Compile Include="Assets\Scripts\Mostly Civilized\MapObjectNamePlate.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\ListPool.cs" />
     <Compile Include="Assets\Scripts\HexGrid.cs" />
-    <Compile Include="Assets\Scripts\HexMetrics.cs" />
+    <Compile Include="Assets\Scripts\Gestione mappe\HexMetrics.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\QPath.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexHash.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\EdgeVertices.cs" />
@@ -93,7 +93,7 @@
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\MapObject.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\Gestione mappe\SaveLoadMenu.cs" />
-    <Compile Include="Assets\Scripts\HexCellShaderData.cs" />
+    <Compile Include="Assets\Scripts\Cose di supporto\HexCellShaderData.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\IQPathUnit.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\MouseController.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\Priority Queue\FastPriorityQueue.cs" />
@@ -115,7 +115,7 @@
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\PathfindingPriorityQueue.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\HexComponent.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\HexMap.cs" />
-    <Compile Include="Assets\Scripts\HexMesh.cs" />
+    <Compile Include="Assets\Scripts\Gestione mappe\HexMesh.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexDirection.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexCoordinates.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexEdgeType.cs" />
@@ -123,8 +123,10 @@
     <Compile Include="Assets\Scripts\Unità\HexUnit.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\CityNameplate.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\Bezier.cs" />
-    <Compile Include="Assets\Scripts\HexCell.cs" />
+    <Compile Include="Assets\Scripts\Gestione mappe\HexCell.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\Unit.cs" />
+    <Compile Include="Assets\Scripts\HexTurnable.cs" />
+    <Compile Include="Assets\Scripts\TurnManager.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Scripts\Shaders\Water.shader" />

@@ -28,7 +28,7 @@ public class HexGrid : MonoBehaviour
 	//Pathfinding
 	HexCellPriorityQueue searchFrontier; 
 	int searchFrontierPhase;
-	HexCell currentPathFrom, currentPathTo;
+	HexCell currentPathFrom, currentPathTo; //partenza e destinazione di un cammino
 	public bool HasPath
 	{
 		get {
@@ -223,14 +223,14 @@ public class HexGrid : MonoBehaviour
 		currentPathFrom = fromCell;
 		currentPathTo = toCell;
 		currentPathExists = Search(fromCell, toCell, unit);
-		ShowPath(unit.Speed);
+		ShowPath(unit.speed);
 	}
 
 	//fa il pathfinding
 	bool Search(HexCell fromCell, HexCell toCell, HexUnit unit)
 	{// se non ho abbastanza movimento per entrare in una cella non ci entro e spreco il movimento
 		searchFrontierPhase += 2; //imposta il valore per cui una cella eè già stata contollata
-		int speed = unit.Speed;
+		int speed = unit.speed;
 		if (searchFrontier == null)
 		{// posso inizializzarlo nello start ed evitare l'if
 			searchFrontier = new HexCellPriorityQueue();
@@ -274,7 +274,7 @@ public class HexGrid : MonoBehaviour
 					continue;
 				}
 
-				int distance = current.Distance + moveCost;
+				int distance = current.Distance + moveCost; //distanza della destinazione
 				int turn = (distance - 1) / speed; //arrotonda per difetto
 				if (turn > currentTurn)
 				{
@@ -323,6 +323,7 @@ public class HexGrid : MonoBehaviour
 		return path;
 	}
 
+
 	//disegna percorso sulla mappa
 	void ShowPath(int speed)
 	{
@@ -333,7 +334,14 @@ public class HexGrid : MonoBehaviour
 			{
 				int turn = (current.Distance - 1) / speed;
 				current.SetLabel(turn.ToString());
-				current.EnableHighlight(Color.white);
+                if (turn == 0)
+                {
+					current.EnableHighlight(Color.white);
+				}
+                else
+                {
+					current.EnableHighlight(Color.grey);
+                }
 				current = current.PathFrom;
 			}
 		}
@@ -414,7 +422,7 @@ public class HexGrid : MonoBehaviour
 			searchFrontier.Clear();
 		}
 
-		int range = unit.VisionRange;
+		int range = unit.visionRange;
 		range += fromCell.ViewElevation;
 		fromCell.SearchPhase = searchFrontierPhase;
 		fromCell.Distance = 0;
@@ -521,7 +529,6 @@ public class HexGrid : MonoBehaviour
 		CV33.unitPrefab = unitPrefabs[0];
 		CapsulaBlu.unitPrefab = unitPrefabs[1];
 	}
-
 
 
 	public void Save(BinaryWriter writer)

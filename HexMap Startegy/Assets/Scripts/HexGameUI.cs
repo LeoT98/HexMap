@@ -6,7 +6,7 @@ public class HexGameUI : MonoBehaviour
     public HexGrid grid;
 	HexCell currentCell;
 	HexUnit selectedUnit;
-
+	[SerializeField] Canvas canvasGioco;
 
 
 
@@ -77,7 +77,8 @@ public class HexGameUI : MonoBehaviour
 	{
 		if (grid.HasPath)
 		{
-			selectedUnit.Travel(grid.GetPath());
+			selectedUnit.CreatePathsStack(grid.GetPath());
+			selectedUnit.MoveOneTurn();
 			grid.ClearPath();
 		}
 	}
@@ -89,6 +90,8 @@ public class HexGameUI : MonoBehaviour
 		enabled = !toggle;
 		grid.ShowUI(!toggle);
 		grid.ClearPath();
+
+		canvasGioco.gameObject.SetActive(!toggle);
 
 		if (toggle)
 		{
