@@ -23,7 +23,7 @@ public class HexMapEditor : MonoBehaviour
 	HexCell previousCell;
 
 	//public HexUnit unitPrefab;
-
+	
 	////////////////////////////////////////////////////////////////////
 
 	void Awake()
@@ -287,6 +287,7 @@ public class HexMapEditor : MonoBehaviour
 	public void SetEditMode(bool toggle)
 	{
 		enabled = toggle;
+		gameObject.SetActive ( toggle);
 	}
 
 	public void SetUnitIndex(int index)

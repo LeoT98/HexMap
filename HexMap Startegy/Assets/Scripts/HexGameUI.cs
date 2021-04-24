@@ -8,10 +8,13 @@ public class HexGameUI : MonoBehaviour
 	HexUnit selectedUnit;
 
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 
-    void Update()
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+
+
+	void Update()
 	{
 		if (!EventSystem.current.IsPointerOverGameObject())
 		{

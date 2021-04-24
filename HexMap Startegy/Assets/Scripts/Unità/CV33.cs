@@ -5,6 +5,7 @@ public class CV33 : HexUnit
     new public static HexUnit unitPrefab; //instanziato nell'Awake di HexGrid e in OnEnable
     new public static int prefabIndex = 0;
 
+
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 
@@ -38,7 +39,7 @@ public class CV33 : HexUnit
 	{
 		int visionCost = 1;
 		if (firstCell.Elevation < toCell.ViewElevation)
-		{
+		{//impedisce di vedere oltre il terreno più alto
 			//visionCost = -1;
 		}
 

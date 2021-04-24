@@ -26,7 +26,7 @@ public class HexGrid : MonoBehaviour
 
 
 	//Pathfinding
-	HexCellPriorityQueue searchFrontier;
+	HexCellPriorityQueue searchFrontier; 
 	int searchFrontierPhase;
 	HexCell currentPathFrom, currentPathTo;
 	public bool HasPath
@@ -263,11 +263,11 @@ public class HexGrid : MonoBehaviour
 				{// se le condizioni sono verificate non considera questo vicino
 					continue;
 				}
-
 				if (!unit.IsValidDestination(neighbor))
 				{
 					continue;
 				}
+
 				int moveCost = unit.GetMoveCost(current, neighbor, d);
 				if (moveCost < 0)
 				{
@@ -456,7 +456,7 @@ public class HexGrid : MonoBehaviour
                 {
 					continue;
                 }
-				int distance = current.Distance + visionCost; //distanza del vicino che sto controllando
+				int distance = current.Distance + visionCost; //costo di visione/distanza del vicino che sto controllando
 				
 				if (distance + neighbor.ViewElevation > range || 
 					distance > fromCoordinates.DistanceTo(neighbor.coordinates) || !neighbor.Explorable)

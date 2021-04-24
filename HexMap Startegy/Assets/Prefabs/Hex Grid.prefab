@@ -51,4 +51,6 @@ MonoBehaviour:
   cellLabelPrefab: {fileID: 7452378139513781427, guid: 304bcaf9fb4aff748852ba843b3560fc, type: 3}
   noiseSource: {fileID: 2800000, guid: 07db2c4966d481f4eaf66274dc0d4829, type: 3}
   cellShaderData: {fileID: 0}
-  unitPrefab: {fileID: 2371947805623802721, guid: 9a96ab80386448046a9b9e507b2b3dc5, type: 3}
+  unitPrefabs:
+  - {fileID: 2511196159794705481, guid: 9a96ab80386448046a9b9e507b2b3dc5, type: 3}
+  - {fileID: -6517481562580121976, guid: cb78bbcfe89a8c04db55bba193a94941, type: 3}
