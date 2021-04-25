@@ -77,7 +77,7 @@ public class HexGameUI : MonoBehaviour
 	{
 		if (grid.HasPath)
 		{
-			selectedUnit.CreatePathsStack(grid.GetPath());
+			selectedUnit.CreateFullPath(grid.GetPath());
 			selectedUnit.MoveOneTurn();
 			grid.ClearPath();
 		}

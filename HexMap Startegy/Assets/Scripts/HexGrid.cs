@@ -41,6 +41,10 @@ public class HexGrid : MonoBehaviour
 	List<HexUnit> units = new List<HexUnit>(); //tutte le unità
 	public List<HexUnit> unitPrefabs= new List<HexUnit>();
 
+		
+
+
+
 	/// //////////////////////////////////////////////////////////////
 
 	void OnEnable()
@@ -523,6 +527,10 @@ public class HexGrid : MonoBehaviour
 		}
 	}
 
+    public List<HexUnit> GetUnits()
+    {
+		return units;
+    }
 
 	void AssegnaUnità()
     {

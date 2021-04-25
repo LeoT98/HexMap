@@ -265,7 +265,7 @@ public class HexCell : MonoBehaviour
     }
     public HexCell NextWithSamePriority { get; set; }//serve per fare linked list in HexCellPriorityQueue
     public int SearchPhase { get; set; } //dice se devo ancora controllare la cella ( < ), è nella frontiera ( = ), l'ho già controllata ( > ). 
-                                         //In relazioene al valore di searchFrontierPhase in HexGrid
+                                                         //In relazioene al valore di searchFrontierPhase in HexGrid
 
     //Unità
     public HexUnit Unit { get; set; }
@@ -528,6 +528,15 @@ public class HexCell : MonoBehaviour
             visibility = 0;
             ShaderData.RefreshVisibility(this);
         }
+    }
+
+    public HexDirection GetNeighborDirection(HexCell neighbor)
+    {
+        for(HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) 
+        {
+            if (GetNeighbor(d) == neighbor) return d; 
+        }
+        return HexDirection.NULL;
     }
 
 

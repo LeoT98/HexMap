@@ -3595,7 +3595,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2045376502}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &452762914
 GameObject:
@@ -6285,7 +6285,7 @@ RectTransform:
   - {fileID: 2037205954}
   - {fileID: 225137763}
   m_Father: {fileID: 2045376502}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -10075,7 +10075,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1196028094}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1795014152}
+        m_TargetAssemblyTypeName: TurnManager, Assembly-CSharp
+        m_MethodName: EndTurn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1196028094
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15325,7 +15337,7 @@ RectTransform:
   - {fileID: 1575899073}
   - {fileID: 1428191680}
   m_Father: {fileID: 2045376502}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -15612,6 +15624,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 120e3ec47be76a34a84a6910209665c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hexGrid: {fileID: 799309550}
 --- !u!4 &1795014153
 Transform:
   m_ObjectHideFlags: 0
@@ -17222,7 +17235,7 @@ RectTransform:
   m_Children:
   - {fileID: 1196028092}
   m_Father: {fileID: 2045376502}
-  m_RootOrder: 6
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -17548,10 +17561,10 @@ Transform:
   - {fileID: 427086}
   - {fileID: 193308790}
   - {fileID: 372356990}
+  - {fileID: 2019069088}
   - {fileID: 810254559}
   - {fileID: 1758525961}
   - {fileID: 441984435}
-  - {fileID: 2019069088}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

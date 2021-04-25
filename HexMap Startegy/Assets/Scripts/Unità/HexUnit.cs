@@ -5,9 +5,10 @@ using System.Collections;
 
 
 
-public class HexUnit : MonoBehaviour, HexTurnable //per flexare potrei farla astratta
+public class HexUnit : MonoBehaviour //per flexare potrei farla astratta
 {
 	public static int prefabIndex= 42;
+	bool isMoving=false;
 
 	//varia anche le visibilità
 	public HexCell Location
@@ -44,9 +45,9 @@ public class HexUnit : MonoBehaviour, HexTurnable //per flexare potrei farla ast
 	public static HexUnit unitPrefab; //instanziato nell'Awake di HexGrid e in OnEnable. Serve solo nei figli
 	public HexGrid Grid { get; set; }
 
-	public Queue<List<HexCell>> pathsQueue=new Queue<List<HexCell>>();
-
+	public List<HexCell> fullPath;
 	List<HexCell> pathToTravel;
+	public int movimentoRimasto;
 	const float travelSpeed = 3f; //per l'animazione
 	const float rotationSpeed = 180f; //per l'animazione
 
@@ -57,6 +58,8 @@ public class HexUnit : MonoBehaviour, HexTurnable //per flexare potrei farla ast
 
 	void OnEnable()
 	{
+		isMoving = false;
+		movimentoRimasto = speed;
 		if (location)
 		{
 			transform.localPosition = location.Position;
@@ -71,19 +74,39 @@ public class HexUnit : MonoBehaviour, HexTurnable //per flexare potrei farla ast
 
 	}
 
-	public void DoTurn()
+	public virtual void DoTurn()
 	{
-
+			MoveOneTurn();
+			movimentoRimasto = speed;
+		
 	}
 
 	public void MoveOneTurn()
     {
-		if (pathsQueue.Count == 0) return;
-		Travel(pathsQueue.Dequeue());
+		if (fullPath.Count <= 1 )  return;
+		List<HexCell> path=new List<HexCell>();
+		HexCell current, next;
+		path.Add(fullPath[0]);
+		while(fullPath.Count>1)
+		{
+			current = fullPath[0];
+			next = fullPath[1];
+			movimentoRimasto -=GetMoveCost(current, next,current.GetNeighborDirection(next));
+			if (movimentoRimasto < 0 || !IsValidDestination(next))
+			{
+				break;
+			}
+			path.Add(next);
+			fullPath.RemoveAt(0);
+		}
+
+		Travel(path);
     }
 
 	public void Travel(List<HexCell> path)
 	{
+		if (isMoving || path.Count<=1) return;
+
 		location.Unit = null;
 		location = path[path.Count - 1];
 		location.Unit = this;
@@ -94,6 +117,7 @@ public class HexUnit : MonoBehaviour, HexTurnable //per flexare potrei farla ast
 
 	IEnumerator TravelPath()
 	{//è una coroutine così più unità possono muoversi contemporaneamente
+		isMoving = true;
 		Vector3 a, b, c = pathToTravel[0].Position;
 		yield return LookAt(pathToTravel[1].Position); // prima di muoversi si gira dalla parte giusta
 		Grid.DecreaseVisibility(currentTravelLocation ? currentTravelLocation : pathToTravel[0], this);
@@ -138,6 +162,7 @@ public class HexUnit : MonoBehaviour, HexTurnable //per flexare potrei farla ast
 
 		ListPool<HexCell>.Add(pathToTravel);
 		pathToTravel = null;
+		isMoving = false;
 	}
 
 	//fa guardare l'unità verso un punto, si occupa di tutti i cambiamenti necessari
@@ -221,30 +246,25 @@ public class HexUnit : MonoBehaviour, HexTurnable //per flexare potrei farla ast
 		return visionCost;
     }
 
-	public void CreatePathsStack(List<HexCell> path)
+	public void CreateFullPath(List<HexCell> path)
 	{
-		pathsQueue.Clear();
-		HexCell current;
-		int previousTurn = 0;
-		List<HexCell> cells = new List<HexCell>();
-		for (int c = 0; c < path.Count; c++)
-		{
-			current = path[c];
-			int turn = (current.Distance - 1) / speed;
-            if (turn <= previousTurn)
-            {
-				cells.Add(current);
-            }
-            else
-            {
-				previousTurn = turn;
-				pathsQueue.Enqueue(cells);
-				cells = new List<HexCell>();
-				cells.Add(current);
-            }
-		}
-		pathsQueue.Enqueue(cells);
+		fullPath.Clear();
+		fullPath = new List<HexCell>(path);
 	}
+
+	protected int CostoCammino(List<HexCell> path)
+    {
+		int somma = 0;
+		for(int c=0; c<path.Count-1;c++)
+        {
+			somma += GetMoveCost(path[c], path[c + 1], path[c].GetNeighborDirection(path[c + 1]));
+        }
+		return somma;
+    }
+
+
+
+
 
 	public virtual void Save(BinaryWriter writer)
 	{
