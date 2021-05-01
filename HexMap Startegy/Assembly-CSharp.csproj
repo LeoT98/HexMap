@@ -77,11 +77,13 @@
     <Compile Include="Assets\Scripts\Mostly Civilized\MapObjectNamePlate.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\ListPool.cs" />
     <Compile Include="Assets\Scripts\HexGrid.cs" />
+    <Compile Include="Assets\Scripts\TurnManager.cs" />
     <Compile Include="Assets\Scripts\Gestione mappe\HexMetrics.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\QPath.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexHash.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\EdgeVertices.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\Priority Queue\IPriorityQueue.cs" />
+    <Compile Include="Assets\Scripts\HexTurnable.cs" />
     <Compile Include="Assets\Scripts\Gestione mappe\NewMapMenu.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\UI\ListBuildableItems.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexFeatureCollection.cs" />
@@ -102,6 +104,7 @@
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\UI\BuildCityButton.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\TurnNumberText.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\CameraKeyboardController.cs" />
+    <Compile Include="Assets\Scripts\HexPlayer.cs" />
     <Compile Include="Assets\Scripts\Cose di supporto\HexMapCamera.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\QPath\Priority Queue\SimplePriorityQueue.cs" />
     <Compile Include="Assets\Scripts\Unità\CV33.cs" />
@@ -125,8 +128,7 @@
     <Compile Include="Assets\Scripts\Cose di supporto\Bezier.cs" />
     <Compile Include="Assets\Scripts\Gestione mappe\HexCell.cs" />
     <Compile Include="Assets\Scripts\Mostly Civilized\Scripts\Unit.cs" />
-    <Compile Include="Assets\Scripts\HexTurnable.cs" />
-    <Compile Include="Assets\Scripts\TurnManager.cs" />
+    <Compile Include="Assets\Scripts\Cose di supporto\TipoTerreno.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Scripts\Shaders\Water.shader" />

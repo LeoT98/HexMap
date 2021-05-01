@@ -229,6 +229,8 @@ public class HexCell : MonoBehaviour
             return specialIndex > 0;
         }
     }
+    public TipoTerreno cellType;
+
 
     //Walls
     public bool Walled {
@@ -265,7 +267,7 @@ public class HexCell : MonoBehaviour
     }
     public HexCell NextWithSamePriority { get; set; }//serve per fare linked list in HexCellPriorityQueue
     public int SearchPhase { get; set; } //dice se devo ancora controllare la cella ( < ), è nella frontiera ( = ), l'ho già controllata ( > ). 
-                                                         //In relazioene al valore di searchFrontierPhase in HexGrid
+                                                          //In relazioene al valore di searchFrontierPhase in HexGrid
 
     //Unità
     public HexUnit Unit { get; set; }
@@ -296,6 +298,35 @@ public class HexCell : MonoBehaviour
     }
     public bool Explorable { get; set; }
 
+
+    public HexPlayer Owner
+    {
+        get { return owner; }
+        set {
+            if (owner == value) return;
+
+            if (specialIndex == 1)
+            {// castello
+                if(owner != null)
+                {
+                    owner.gainedSteel -= 1;
+                }
+                value.gainedSteel += 1;
+            }
+           else if (specialIndex == 2)
+           {// alberone
+                if (owner != null)
+                {
+                    owner.gainedMP -= 1;
+                }
+                value.gainedMP += 1;
+            }
+
+            owner = value;
+
+        }
+    }
+    HexPlayer owner = null;
 
     /////////////////////////////////////////////////////////////
 
@@ -538,6 +569,8 @@ public class HexCell : MonoBehaviour
         }
         return HexDirection.NULL;
     }
+
+
 
 
 

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class HexGameUI : MonoBehaviour
 {
@@ -7,7 +8,7 @@ public class HexGameUI : MonoBehaviour
 	HexCell currentCell;
 	HexUnit selectedUnit;
 	[SerializeField] Canvas canvasGioco;
-
+	[SerializeField] Text textName, textMov, textMP, textSteel;
 
 
 
@@ -21,12 +22,14 @@ public class HexGameUI : MonoBehaviour
 			if (Input.GetMouseButtonDown(0))
 			{
 				DoSelection();
+				UpdateUnitTexts();
 			}
 			else if (selectedUnit)
 			{
 				if (Input.GetMouseButtonDown(1))
 				{//se un'unità è selezionata la muove
 					DoMove();
+					UpdateUnitTexts();
 				}
 				else
 				{//se un'unità è selezionata disegna e calcola il pathfinding
@@ -35,7 +38,6 @@ public class HexGameUI : MonoBehaviour
 			}
 		}
 	}
-
 
 	bool UpdateCurrentCell()
 	{
@@ -82,6 +84,30 @@ public class HexGameUI : MonoBehaviour
 			grid.ClearPath();
 		}
 	}
+
+	public void UpdateUnitTexts()
+    {
+		if (!selectedUnit) return;
+		textName.text = "Nome: " + selectedUnit.nome;
+		textMov.text = "Movimento: " + 
+			( (selectedUnit.movimentoRimasto < 0) ? 0 : selectedUnit.movimentoRimasto) + "/" + selectedUnit.speed;
+    }
+
+	public void UpdateResources(int mp, int steel)
+    {
+		textMP.text="Manpower: "+ mp;
+		textSteel.text = "Steel: " + steel;
+    }
+
+	public void Conquista()
+    {
+        if (selectedUnit)
+        {
+			selectedUnit.Conquista();
+        }
+    }
+
+
 
 
 

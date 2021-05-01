@@ -41,8 +41,9 @@ public class HexGrid : MonoBehaviour
 	List<HexUnit> units = new List<HexUnit>(); //tutte le unità
 	public List<HexUnit> unitPrefabs= new List<HexUnit>();
 
-		
-
+	//Players
+	public List<HexPlayer> players= new List<HexPlayer>();
+	public int numeroGiocatori=1;
 
 
 	/// //////////////////////////////////////////////////////////////
@@ -64,6 +65,12 @@ public class HexGrid : MonoBehaviour
 		AssegnaUnità();
 		cellShaderData = gameObject.AddComponent<HexCellShaderData>();
 		cellShaderData.Grid = this;
+
+		for(int c = 0; c < numeroGiocatori; c++)
+        {
+			players.Add(new HexPlayer(c));
+        }
+
 		CreateMap(cellCountX, cellCountZ);
 	}
 
@@ -227,7 +234,7 @@ public class HexGrid : MonoBehaviour
 		currentPathFrom = fromCell;
 		currentPathTo = toCell;
 		currentPathExists = Search(fromCell, toCell, unit);
-		ShowPath(unit.speed);
+		ShowPath(unit.speed, unit.movimentoRimasto);
 	}
 
 	//fa il pathfinding
@@ -329,14 +336,23 @@ public class HexGrid : MonoBehaviour
 
 
 	//disegna percorso sulla mappa
-	void ShowPath(int speed)
+	void ShowPath(int speed, int movRimasto)
 	{
 		if (currentPathExists)
 		{
+			int delta = speed - movRimasto;
 			HexCell current = currentPathTo;
 			while (current != currentPathFrom)
 			{
-				int turn = (current.Distance - 1) / speed;
+				int turn;
+				if(current.Distance<= movRimasto)
+                {
+					turn = 0;
+                }
+                else
+                {
+					turn = (current.Distance+delta - 1) / speed;
+				}
 				current.SetLabel(turn.ToString());
                 if (turn == 0)
                 {
@@ -393,6 +409,7 @@ public class HexGrid : MonoBehaviour
 		unit.transform.SetParent(transform, false);
 		unit.Location = location;
 		unit.Orientation = orientation;
+		unit.owner = players[0];
 	}
 
 	public void AddUnit(int i, HexCell location, float orientation)
@@ -403,6 +420,7 @@ public class HexGrid : MonoBehaviour
 		unit.transform.SetParent(transform, false);
 		unit.Location = location;
 		unit.Orientation = orientation;
+		unit.owner = players[0];
 	}
 
 	public void RemoveUnit(HexUnit unit)

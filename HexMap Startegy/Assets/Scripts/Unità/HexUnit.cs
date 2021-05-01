@@ -7,8 +7,13 @@ using System.Collections;
 
 public class HexUnit : MonoBehaviour //per flexare potrei farla astratta
 {
+	//STATISTICHE UNITÀ
+	public string nome;
+	public int visionRange;
+	public int speed; // caselle che si muove
 	public static int prefabIndex= 42;
 	bool isMoving=false;
+
 
 	//varia anche le visibilità
 	public HexCell Location
@@ -51,8 +56,7 @@ public class HexUnit : MonoBehaviour //per flexare potrei farla astratta
 	const float travelSpeed = 3f; //per l'animazione
 	const float rotationSpeed = 180f; //per l'animazione
 
-	public int visionRange;
-	public int speed; // caselle che si muove
+	public HexPlayer owner;
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
@@ -262,7 +266,10 @@ public class HexUnit : MonoBehaviour //per flexare potrei farla astratta
 		return somma;
     }
 
-
+	public void Conquista()
+    {
+		location.Owner = owner;
+    }
 
 
 
