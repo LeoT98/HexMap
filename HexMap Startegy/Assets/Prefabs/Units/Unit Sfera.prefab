@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nome: Sfera Blu
-  visionRange: 3
-  speed: 20
+  visionRange: 5
+  speed: 15
   fullPath: []
   movimentoRimasto: 0

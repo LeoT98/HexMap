@@ -553,7 +553,7 @@ public class HexGrid : MonoBehaviour
 	void AssegnaUnità()
     {
 		CV33.unitPrefab = unitPrefabs[0];
-		CapsulaBlu.unitPrefab = unitPrefabs[1];
+		SferaBlu.unitPrefab = unitPrefabs[1];
 	}
 
 

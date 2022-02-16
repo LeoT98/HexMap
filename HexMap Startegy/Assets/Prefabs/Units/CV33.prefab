@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nome: Carro Veloce L3
-  visionRange: 8
+  visionRange: 3
   speed: 20
   fullPath: []
   movimentoRimasto: 0
